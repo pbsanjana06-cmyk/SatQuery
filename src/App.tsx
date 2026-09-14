@@ -532,6 +532,14 @@ function App() {
     }
   }
 
+  const startModeAnalysis = (selectedMode: string, selectedQuery: string) => {
+    setMode(selectedMode)
+    setQuery(selectedQuery)
+    setActiveSection('analysis')
+    if (images.length) void runAnalysis(selectedQuery)
+    else setAnalysisError('Upload an image in the Analysis section, then click ANALYZE to run this mode.')
+  }
+
   const handleFiles = async (fileList: FileList | null) => {
     if (!fileList || fileList.length === 0) return
     const selectedFiles = Array.from(fileList).slice(0, mode === 'single' ? 1 : 2)
@@ -1304,7 +1312,7 @@ function App() {
               <div className="flex items-center justify-between"><span>Affected Area</span><span className="font-semibold text-white">{analysis?.result?.area_measurements?.affected_area ?? 14.2} km²</span></div>
               <div className="flex items-center justify-between"><span>Severity</span><span className="text-red-300">{mode === 'disaster' && analysis ? 'High' : 'Not run'}</span></div>
               <div className="flex items-center justify-between"><span>Confidence</span><span className="text-emerald-300">{mode === 'disaster' ? `${analysis?.result?.confidence_score ?? 89}%` : '89%'}</span></div>
-              <button type="button" onClick={() => { setMode('disaster'); setQuery('Which areas are affected by flooding or disaster damage?'); setActiveSection('analysis') }} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze disaster imagery</button>
+              <button type="button" onClick={() => startModeAnalysis('disaster', 'Which areas are affected by flooding or disaster damage?')} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze disaster imagery</button>
             </div>
           </div>
 
@@ -1314,7 +1322,7 @@ function App() {
               <div className="flex items-center justify-between"><span>Agricultural Area</span><span className="font-semibold text-white">42.8 km²</span></div>
               <div className="flex items-center justify-between"><span>Vegetation Change</span><span className="text-yellow-300">-6.4%</span></div>
               <div className="flex items-center justify-between"><span>Stress Regions</span><span className="text-cyan-300">7</span></div>
-              <button type="button" onClick={() => { setMode('agriculture'); setQuery('Has vegetation or agricultural land changed?'); setActiveSection('analysis') }} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze agriculture</button>
+              <button type="button" onClick={() => startModeAnalysis('agriculture', 'Has vegetation or agricultural land changed?')} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze agriculture</button>
             </div>
           </div>
 
@@ -1324,7 +1332,7 @@ function App() {
               <div className="flex items-center justify-between"><span>Urban Expansion</span><span className="font-semibold text-white">13.7%</span></div>
               <div className="flex items-center justify-between"><span>New Structures</span><span className="text-emerald-300">126</span></div>
               <div className="flex items-center justify-between"><span>Changed Area</span><span className="text-violet-300">17.2 km²</span></div>
-              <button type="button" onClick={() => { setMode('urban_growth'); setQuery('Are there signs of urban growth or new construction?'); setActiveSection('analysis') }} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze urban growth</button>
+              <button type="button" onClick={() => startModeAnalysis('urban_growth', 'Are there signs of urban growth or new construction?')} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze urban growth</button>
             </div>
           </div>
         </section>
