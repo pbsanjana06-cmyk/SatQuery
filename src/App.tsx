@@ -935,7 +935,7 @@ function App() {
           </div>
         </section>
 
-        <div hidden={activeSection !== 'analysis' && activeSection !== 'map' && activeSection !== 'nearby'} id="analysis" className="grid scroll-mt-24 gap-6 xl:grid-cols-[300px_1fr_360px]">
+        <div hidden={activeSection !== 'analysis' && activeSection !== 'map' && activeSection !== 'nearby'} id="analysis" className="mx-auto max-w-5xl space-y-6 scroll-mt-24">
           <aside className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
             <div className="mb-4 flex items-center gap-2 text-lg font-semibold">
               <ImageIcon size={18} className="text-blue-300" /> {currentLabels.input}
@@ -1094,7 +1094,7 @@ function App() {
                 {safeLocation && <div className="mt-1 font-mono text-slate-300">{safeLocation.lat.toFixed(5)}, {safeLocation.lng.toFixed(5)}</div>}
               </div>
               {(activeSection === 'map' || activeSection === 'nearby') && (
-                <div className="h-52 overflow-hidden rounded-xl border border-slate-700">
+                <div className="h-[520px] min-h-[420px] overflow-hidden rounded-xl border border-slate-700">
                   <MapContainer center={safeLocation ? [safeLocation.lat, safeLocation.lng] : [20.5937, 78.9629]} zoom={7} scrollWheelZoom className="h-full w-full">
                     <MapRecenter location={safeLocation} />
                     <TileLayer
