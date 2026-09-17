@@ -684,6 +684,21 @@ function App() {
     }).slice(0, 8)
   }, [searchTerm])
 
+  useEffect(() => {
+    const handleKeyboardShortcut = (event: KeyboardEvent) => {
+      const isMetaKey = event.metaKey || event.ctrlKey
+      if (isMetaKey && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        const input = document.getElementById('satquery-global-search') as HTMLInputElement | null
+        input?.focus()
+        input?.select()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboardShortcut)
+    return () => window.removeEventListener('keydown', handleKeyboardShortcut)
+  }, [])
+
   const goToSection = (section: string) => {
     setActiveSection(section)
     window.requestAnimationFrame(() => {
@@ -742,6 +757,7 @@ function App() {
             <div className="relative hidden min-w-[260px] md:block">
               <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
+                id="satquery-global-search"
                 type="search"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
@@ -770,6 +786,39 @@ function App() {
                     ))
                   ) : (
                     <div className="px-2 py-2 text-xs text-slate-400">No matching features found. Try “weather”, “analysis”, or “map”.</div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="relative block min-w-[140px] md:hidden">
+              <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                id="satquery-global-search-mobile"
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search..."
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 pl-9 pr-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500"
+              />
+              {searchTerm && (
+                <div className="absolute left-0 right-0 top-full z-20 mt-2 rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-xl">
+                  {filteredSearchResults.length > 0 ? (
+                    filteredSearchResults.map((item) => (
+                      <button
+                        key={`mobile-${item.group}-${item.label}`}
+                        type="button"
+                        onClick={() => {
+                          setSearchTerm('')
+                          goToSection(item.value)
+                        }}
+                        className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-slate-200 hover:bg-slate-800"
+                      >
+                        <span>{item.label}</span>
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Open</span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-2 py-2 text-xs text-slate-400">No results</div>
                   )}
                 </div>
               )}
