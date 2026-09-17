@@ -649,28 +649,39 @@ function App() {
   const primaryImage = images[0]?.url
 
   const sidebarItems = [
-    { label: 'Overview', value: 'overview', keywords: ['dashboard', 'summary', 'home', 'welcome'] },
-    { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'bigearthnet', 'data', 'benchmark', 'sentinel'] },
-    { label: 'AI Nearby Issues', value: 'nearby', keywords: ['nearby', 'area', 'issues', 'satellite', 'location'] },
-    { label: 'Climate & Early Warning', value: 'climate', keywords: ['climate', 'weather', 'forecast', 'warning', 'risk'] },
-    { label: 'Analysis', value: 'analysis', keywords: ['analysis', 'upload', 'question', 'ai', 'image'] },
-    { label: 'Satellite map', value: 'map', keywords: ['map', 'location', 'geolocation', 'coordinates', 'viewport'] },
-    { label: 'AI results', value: 'results', keywords: ['results', 'summary', 'report', 'insights', 'findings'] },
-    { label: 'Data provenance', value: 'provenance', keywords: ['provenance', 'metadata', 'source', 'sensor', 'mission'] },
-    { label: 'History', value: 'history', keywords: ['history', 'past', 'previous', 'saved', 'analyses'] },
-    { label: 'Analysis modes', value: 'modes', keywords: ['modes', 'disaster', 'agriculture', 'comparison', 'mode'] },
-    { label: 'Sensor comparison', value: 'comparison', keywords: ['sensor', 'comparison', 'sar', 'optical', 'multispectral'] },
-    { label: 'Tools', value: 'tools', keywords: ['tools', 'generate', 'report', 'voice', 'speak'] },
+    { label: 'Overview', value: 'overview', keywords: ['dashboard', 'summary', 'home', 'welcome', 'stats'] },
+    { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'bigearthnet', 'data', 'benchmark', 'sentinel', 'land cover'] },
+    { label: 'AI Nearby Issues', value: 'nearby', keywords: ['nearby', 'area', 'issues', 'satellite', 'location', 'anomaly'] },
+    { label: 'Climate & Early Warning', value: 'climate', keywords: ['climate', 'weather', 'forecast', 'warning', 'risk', 'rain'] },
+    { label: 'Analysis', value: 'analysis', keywords: ['analysis', 'upload', 'question', 'ai', 'image', 'query'] },
+    { label: 'Satellite map', value: 'map', keywords: ['map', 'location', 'geolocation', 'coordinates', 'viewport', 'geospatial'] },
+    { label: 'AI results', value: 'results', keywords: ['results', 'summary', 'report', 'insights', 'findings', 'evidence'] },
+    { label: 'Data provenance', value: 'provenance', keywords: ['provenance', 'metadata', 'source', 'sensor', 'mission', 'dataset'] },
+    { label: 'History', value: 'history', keywords: ['history', 'past', 'previous', 'saved', 'analyses', 'records'] },
+    { label: 'Analysis modes', value: 'modes', keywords: ['modes', 'disaster', 'agriculture', 'comparison', 'mode', 'change detection'] },
+    { label: 'Sensor comparison', value: 'comparison', keywords: ['sensor', 'comparison', 'sar', 'optical', 'multispectral', 'bands'] },
+    { label: 'Tools', value: 'tools', keywords: ['tools', 'generate', 'report', 'voice', 'speak', 'speech'] },
+  ]
+
+  const siteSearchCatalog = [
+    ...sidebarItems.map((item) => ({ ...item, group: 'Section' })),
+    { label: 'Analyze image', value: 'analysis', group: 'Action', keywords: ['analyze', 'image', 'question', 'upload', 'run analysis'] },
+    { label: 'Analyze climate', value: 'climate', group: 'Action', keywords: ['climate', 'weather', 'forecast', 'warning'] },
+    { label: 'Analyze my area', value: 'nearby', group: 'Action', keywords: ['area', 'nearby', 'location', 'issues', 'surrounding'] },
+    { label: 'Generate PDF report', value: 'results', group: 'Action', keywords: ['pdf', 'report', 'download', 'export'] },
+    { label: 'View history', value: 'history', group: 'Action', keywords: ['history', 'past', 'saved', 'records'] },
   ]
 
   const filteredSearchResults = useMemo(() => {
     const trimmed = searchTerm.trim().toLowerCase()
     if (!trimmed) return []
 
-    return sidebarItems.filter((item) => {
-      const haystack = `${item.label} ${item.keywords.join(' ')}`.toLowerCase()
-      return haystack.includes(trimmed)
-    }).slice(0, 6)
+    const searchTerms = trimmed.split(/\s+/).filter(Boolean)
+
+    return siteSearchCatalog.filter((item) => {
+      const haystack = `${item.label} ${item.group} ${item.keywords.join(' ')}`.toLowerCase()
+      return searchTerms.every((term) => haystack.includes(term)) || item.label.toLowerCase().includes(trimmed)
+    }).slice(0, 8)
   }, [searchTerm])
 
   const goToSection = (section: string) => {
@@ -728,13 +739,13 @@ function App() {
           </div>
 
           <div className="flex items-center gap-4 text-sm text-slate-300">
-            <div className="relative hidden min-w-[220px] md:block">
+            <div className="relative hidden min-w-[260px] md:block">
               <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="search"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search SatQuery..."
+                placeholder="Search sections, actions, features..."
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 pl-9 pr-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500"
               />
               {searchTerm && (
@@ -742,7 +753,7 @@ function App() {
                   {filteredSearchResults.length > 0 ? (
                     filteredSearchResults.map((item) => (
                       <button
-                        key={item.value}
+                        key={`${item.group}-${item.label}`}
                         type="button"
                         onClick={() => {
                           setSearchTerm('')
@@ -750,12 +761,15 @@ function App() {
                         }}
                         className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-slate-200 hover:bg-slate-800"
                       >
-                        <span>{item.label}</span>
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Go</span>
+                        <span>
+                          <span className="block font-medium">{item.label}</span>
+                          <span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{item.group}</span>
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Open</span>
                       </button>
                     ))
                   ) : (
-                    <div className="px-2 py-2 text-xs text-slate-400">No matching features found.</div>
+                    <div className="px-2 py-2 text-xs text-slate-400">No matching features found. Try “weather”, “analysis”, or “map”.</div>
                   )}
                 </div>
               )}
