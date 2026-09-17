@@ -107,7 +107,7 @@ export const analyzeWithOllama = async (mode: AnalysisMode, prompt: string, imag
   return extractJson(result.response)
 }
 
-export const analyzeWithOpenAI = async (mode: AnalysisMode, prompt: string, images: UploadedImage[]): Promise<MockAiPayload> => {
+export const analyzeWithGemini = async (mode: AnalysisMode, prompt: string, images: UploadedImage[]): Promise<MockAiPayload> => {
   if (!isSupabaseConfigured) throw new Error('Supabase is not configured. Add the Supabase values to .env first.')
 
   const { data: { session } } = await supabase.auth.getSession()
@@ -128,12 +128,7 @@ export const analyzeWithOpenAI = async (mode: AnalysisMode, prompt: string, imag
   })
 
   const result = await response.json() as MockAiPayload & { error?: string }
-  if (!response.ok) {
-    const errorMessage = result.error || 'The analysis service returned an error.'
-    const quotaExhausted = errorMessage.toLowerCase().includes('credit_balance_exhausted') || errorMessage.toLowerCase().includes('insufficient_quota') || errorMessage.toLowerCase().includes('no credits remaining')
-    if (quotaExhausted) throw new Error('Live analysis is unavailable because the OpenAI API account has no credits remaining. Add billing credits, then try ANALYZE again.')
-    throw new Error(errorMessage)
-  }
+  if (!response.ok) throw new Error(result.error || 'The Gemini analysis service returned an error.')
   return result
 }
 
