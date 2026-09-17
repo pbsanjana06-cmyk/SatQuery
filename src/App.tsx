@@ -802,8 +802,7 @@ function App() {
         </div>
       )}
 
-      <div className="min-h-screen bg-[#0b1625] text-slate-100">
-        <div className="flex min-h-screen">
+      <div className="flex min-h-screen">
         <aside className="hidden w-72 shrink-0 border-r border-slate-800 bg-[#111c2d] p-4 lg:block">
           <div className="mb-5 flex items-center gap-3 rounded-xl bg-slate-800/70 p-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-bold text-white">S</div>
@@ -1541,9 +1540,8 @@ function App() {
           </div>
         </section>
       </main>
-        </div>
-      </div>
     </div>
+  </div>
   )
 }
 
