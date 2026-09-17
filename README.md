@@ -1,5 +1,16 @@
 # React + TypeScript + Vite
 
+## Free local image analysis
+
+SatQuery uses Ollama for live satellite-image analysis without OpenAI API charges.
+
+1. Install Ollama from [ollama.com](https://ollama.com/download).
+2. Run `ollama pull llama3.2-vision` in PowerShell.
+3. Start Ollama with `ollama serve` if it is not already running.
+4. Start SatQuery with `npm run dev` and open the local Vite URL.
+
+The app connects to Ollama through the Vite `/ollama` proxy. This free setup runs on the computer where Ollama is installed; the deployed Vercel site cannot access your local Ollama server.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

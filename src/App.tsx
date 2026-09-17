@@ -26,7 +26,7 @@ import { MapContainer, Circle, CircleMarker, Marker, Popup, Rectangle, TileLayer
 import { BarChart, Bar, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { generateAnalysisPdf } from './services/reportService'
 import { listAnalysisHistory, saveAnalysisResult } from './services/analysisService'
-import { analyzeWithOpenAI } from './services/ai/aiService'
+import { analyzeWithOllama } from './services/ai/aiService'
 import { validateImageFile } from './services/imageService'
 import { isSupabaseConfigured, supabase } from './lib/supabase'
 import { AuthPage } from './components/AuthPage'
@@ -533,7 +533,7 @@ function App() {
     setIsLoading(true)
     setAnalysisError('')
     try {
-      const result = await analyzeWithOpenAI(mode as any, queryToAnalyze, images)
+      const result = await analyzeWithOllama(mode as any, queryToAnalyze, images)
       const saved = await saveAnalysisResult({
         id: crypto.randomUUID(),
         title: 'Live Analysis',
