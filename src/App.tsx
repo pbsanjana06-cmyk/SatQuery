@@ -159,14 +159,15 @@ function App() {
   }, [])
 
   function requestCurrentLocation() {
+    setLocationStatus('Requesting location permission... Click Allow in the browser prompt.')
+
     if (!('geolocation' in navigator)) {
-      setCurrentLocation({ lat: 20.5937, lng: 78.9629 })
-      setLocationAddress('Default map center')
-      setLocationStatus('Location unavailable; showing the default map center')
+      setCurrentLocation(null)
+      setLocationAddress('')
+      setLocationStatus('Location access is unavailable in this browser.')
       return
     }
 
-    setLocationStatus('Requesting location permission...')
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const location = {
@@ -174,9 +175,9 @@ function App() {
           lng: Number(position.coords.longitude),
         }
         if (!Number.isFinite(location.lat) || !Number.isFinite(location.lng)) {
-          setCurrentLocation({ lat: 20.5937, lng: 78.9629 })
-          setLocationAddress('Default map center')
-          setLocationStatus('Invalid location received; showing the default map center')
+          setCurrentLocation(null)
+          setLocationAddress('')
+          setLocationStatus('The browser returned an invalid location. Please try Locate me again.')
           return
         }
         setCurrentLocation(location)
@@ -191,12 +192,17 @@ function App() {
           setLocationAddress('Address unavailable; coordinates are shown')
         }
       },
-      () => {
-        setCurrentLocation({ lat: 20.5937, lng: 78.9629 })
-        setLocationAddress('Default map center')
-        setLocationStatus('Permission denied; showing the default map center')
+      (error) => {
+        setCurrentLocation(null)
+        setLocationAddress('')
+        const message = error.code === error.PERMISSION_DENIED
+          ? 'Location permission was denied. Allow location access in the browser address-bar settings, then click Locate me again.'
+          : error.code === error.TIMEOUT
+            ? 'Location request timed out. Check your device location settings and try Locate me again.'
+            : 'Unable to determine your location. Check your device location settings and try again.'
+        setLocationStatus(message)
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     )
   }
 
