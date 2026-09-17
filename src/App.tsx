@@ -612,6 +612,9 @@ function App() {
       recommendations: analysis.result.recommendations,
       confidence: analysis.result.confidence_score,
       reliability: analysis.result.reliability_score,
+      landCover: analysis.result.land_cover_result,
+      detectedChanges: analysis.result.detected_changes,
+      areaMeasurements: analysis.result.area_measurements,
     })
     const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }))
     window.open(url, '_blank')
@@ -628,6 +631,8 @@ function App() {
       recommendations: ['Verify potential issues with current local or official sources.', 'Use uploaded or provider-backed imagery for production analysis.'],
       confidence: nearbyAnalysis.issues[0]?.confidence ?? 0,
       reliability: nearbyAnalysis.issues[0]?.confidence ? nearbyAnalysis.issues[0].confidence : 0,
+      detectedChanges: nearbyAnalysis.issues.map((issue) => ({ label: issue.issue_type, percentage: issue.confidence ?? 0 })),
+      areaMeasurements: { radius: nearbyAnalysis.radius, detected_issues: nearbyAnalysis.issues.length },
     })
     const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }))
     window.open(url, '_blank')
