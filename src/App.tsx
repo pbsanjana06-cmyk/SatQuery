@@ -402,6 +402,28 @@ function App() {
     water: '+4.1%',
   }), [beforeDate, afterDate])
 
+  useEffect(() => {
+    const handleKeyboardShortcut = (event: KeyboardEvent) => {
+      const isMetaKey = event.metaKey || event.ctrlKey
+      if (isMetaKey && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setIsSearchOpen(true)
+        requestAnimationFrame(() => {
+          const input = document.getElementById('satquery-search-modal-input') as HTMLInputElement | null
+          input?.focus()
+          input?.select()
+        })
+      }
+
+      if (event.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboardShortcut)
+    return () => window.removeEventListener('keydown', handleKeyboardShortcut)
+  }, [isSearchOpen])
+
   if (isAuthLoading) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-300">Checking your SatQuery session...</div>
   }
@@ -673,7 +695,7 @@ function App() {
     { label: 'View history', value: 'history', group: 'Action', keywords: ['history', 'past', 'saved', 'records'] },
   ]
 
-  const filteredSearchResults = useMemo(() => {
+  const filteredSearchResults = (() => {
     const trimmed = searchTerm.trim().toLowerCase()
     if (!trimmed) return []
 
@@ -683,29 +705,7 @@ function App() {
       const haystack = `${item.label} ${item.group} ${item.keywords.join(' ')}`.toLowerCase()
       return searchTerms.every((term) => haystack.includes(term)) || item.label.toLowerCase().includes(trimmed)
     }).slice(0, 8)
-  }, [searchTerm])
-
-  useEffect(() => {
-    const handleKeyboardShortcut = (event: KeyboardEvent) => {
-      const isMetaKey = event.metaKey || event.ctrlKey
-      if (isMetaKey && event.key.toLowerCase() === 'k') {
-        event.preventDefault()
-        setIsSearchOpen(true)
-        requestAnimationFrame(() => {
-          const input = document.getElementById('satquery-search-modal-input') as HTMLInputElement | null
-          input?.focus()
-          input?.select()
-        })
-      }
-
-      if (event.key === 'Escape' && isSearchOpen) {
-        setIsSearchOpen(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyboardShortcut)
-    return () => window.removeEventListener('keydown', handleKeyboardShortcut)
-  }, [isSearchOpen])
+  })()
 
   const openSearch = () => {
     setIsSearchOpen(true)
