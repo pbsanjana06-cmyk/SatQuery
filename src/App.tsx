@@ -100,6 +100,7 @@ function App() {
   const [analysisError, setAnalysisError] = useState('')
   const [history, setHistory] = useState<AnalysisRecord[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [nearbyAnalysis, setNearbyAnalysis] = useState<NearbyIssueAnalysis | null>(null)
   const [nearbyRadius, setNearbyRadius] = useState(2000)
   const [nearbyPermissionOpen, setNearbyPermissionOpen] = useState(false)
@@ -689,15 +690,36 @@ function App() {
       const isMetaKey = event.metaKey || event.ctrlKey
       if (isMetaKey && event.key.toLowerCase() === 'k') {
         event.preventDefault()
-        const input = document.getElementById('satquery-global-search') as HTMLInputElement | null
-        input?.focus()
-        input?.select()
+        setIsSearchOpen(true)
+        requestAnimationFrame(() => {
+          const input = document.getElementById('satquery-search-modal-input') as HTMLInputElement | null
+          input?.focus()
+          input?.select()
+        })
+      }
+
+      if (event.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false)
       }
     }
 
     window.addEventListener('keydown', handleKeyboardShortcut)
     return () => window.removeEventListener('keydown', handleKeyboardShortcut)
-  }, [])
+  }, [isSearchOpen])
+
+  const openSearch = () => {
+    setIsSearchOpen(true)
+    requestAnimationFrame(() => {
+      const input = document.getElementById('satquery-search-modal-input') as HTMLInputElement | null
+      input?.focus()
+      input?.select()
+    })
+  }
+
+  const closeSearch = () => {
+    setIsSearchOpen(false)
+    setSearchTerm('')
+  }
 
   const goToSection = (section: string) => {
     setActiveSection(section)
@@ -708,7 +730,80 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#0b1625] text-slate-100">
-      <div className="flex min-h-screen">
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 p-4 backdrop-blur-sm">
+          <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-slate-700 bg-[#111c2d] p-4 shadow-2xl shadow-slate-950/80">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">
+                <Search size={16} className="text-blue-300" /> Search SatQuery
+              </div>
+              <button type="button" onClick={closeSearch} className="rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300">Esc</button>
+            </div>
+
+            <div className="relative">
+              <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                id="satquery-search-modal-input"
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search pages, actions, and features..."
+                className="w-full rounded-xl border border-slate-700 bg-slate-950 pl-9 pr-3 py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div className="mt-4">
+              {searchTerm ? (
+                filteredSearchResults.length > 0 ? (
+                  <div className="space-y-2">
+                    {filteredSearchResults.map((item) => (
+                      <button
+                        key={`modal-${item.group}-${item.label}`}
+                        type="button"
+                        onClick={() => {
+                          closeSearch()
+                          goToSection(item.value)
+                        }}
+                        className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-3 text-left hover:border-blue-500"
+                      >
+                        <span>
+                          <span className="block font-medium text-slate-100">{item.label}</span>
+                          <span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{item.group}</span>
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Open</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/60 p-4 text-sm text-slate-400">No matching features found. Try “weather”, “analysis”, “map”, or “history”.</div>
+                )
+              ) : (
+                <div className="space-y-2">
+                  {['Analysis', 'Climate', 'Nearby', 'Map', 'History'].map((quick) => (
+                    <button
+                      key={quick}
+                      type="button"
+                      onClick={() => {
+                        const mapped = quick.toLowerCase()
+                        const target = mapped === 'analysis' ? 'analysis' : mapped === 'climate' ? 'climate' : mapped === 'nearby' ? 'nearby' : mapped === 'map' ? 'map' : 'history'
+                        closeSearch()
+                        goToSection(target)
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-left text-sm text-slate-200 hover:border-blue-500"
+                    >
+                      <span>{quick}</span>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Jump</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="min-h-screen bg-[#0b1625] text-slate-100">
+        <div className="flex min-h-screen">
         <aside className="hidden w-72 shrink-0 border-r border-slate-800 bg-[#111c2d] p-4 lg:block">
           <div className="mb-5 flex items-center gap-3 rounded-xl bg-slate-800/70 p-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-bold text-white">S</div>
@@ -753,76 +848,13 @@ function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-slate-300">
-            <div className="relative hidden min-w-[260px] md:block">
-              <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                id="satquery-global-search"
-                type="search"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search sections, actions, features..."
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 pl-9 pr-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500"
-              />
-              {searchTerm && (
-                <div className="absolute left-0 right-0 top-full z-20 mt-2 rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-xl">
-                  {filteredSearchResults.length > 0 ? (
-                    filteredSearchResults.map((item) => (
-                      <button
-                        key={`${item.group}-${item.label}`}
-                        type="button"
-                        onClick={() => {
-                          setSearchTerm('')
-                          goToSection(item.value)
-                        }}
-                        className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-slate-200 hover:bg-slate-800"
-                      >
-                        <span>
-                          <span className="block font-medium">{item.label}</span>
-                          <span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{item.group}</span>
-                        </span>
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Open</span>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="px-2 py-2 text-xs text-slate-400">No matching features found. Try “weather”, “analysis”, or “map”.</div>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="relative block min-w-[140px] md:hidden">
-              <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                id="satquery-global-search-mobile"
-                type="search"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search..."
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 pl-9 pr-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500"
-              />
-              {searchTerm && (
-                <div className="absolute left-0 right-0 top-full z-20 mt-2 rounded-xl border border-slate-700 bg-slate-950 p-2 shadow-xl">
-                  {filteredSearchResults.length > 0 ? (
-                    filteredSearchResults.map((item) => (
-                      <button
-                        key={`mobile-${item.group}-${item.label}`}
-                        type="button"
-                        onClick={() => {
-                          setSearchTerm('')
-                          goToSection(item.value)
-                        }}
-                        className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-slate-200 hover:bg-slate-800"
-                      >
-                        <span>{item.label}</span>
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Open</span>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="px-2 py-2 text-xs text-slate-400">No results</div>
-                  )}
-                </div>
-              )}
-            </div>
+          <div className="flex items-center gap-3 text-sm text-slate-300">
+            <button type="button" onClick={openSearch} className="hidden items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 md:flex">
+              <Search size={15} /> Search
+            </button>
+            <button type="button" onClick={openSearch} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 md:hidden">
+              <Search size={15} />
+            </button>
             <button type="button" onClick={() => goToSection('history')} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2">
               <History size={16} /> {currentLabels.history}
             </button>
