@@ -128,7 +128,20 @@ export const analyzeWithOpenAI = async (mode: AnalysisMode, prompt: string, imag
   })
 
   const result = await response.json() as MockAiPayload & { error?: string }
-  if (!response.ok) throw new Error(result.error || 'The analysis service returned an error.')
+  if (!response.ok) {
+    const errorMessage = result.error || 'The analysis service returned an error.'
+    const quotaExhausted = errorMessage.toLowerCase().includes('credit_balance_exhausted') || errorMessage.toLowerCase().includes('insufficient_quota') || errorMessage.toLowerCase().includes('no credits remaining')
+    if (quotaExhausted) {
+      const fallback = await mockAiAnalysis(mode, prompt)
+      return {
+        ...fallback,
+        summary: `Demo fallback: OpenAI credits are exhausted. Add API credits for live image analysis. ${fallback.summary}`,
+        detailed_explanation: `This is a local demonstration result because the configured OpenAI account has no remaining credits. Add credits at https://platform.openai.com/settings/organization/billing/ for live model analysis. ${fallback.detailed_explanation}`,
+        reliability_level: 'LOW',
+      }
+    }
+    throw new Error(errorMessage)
+  }
   return result
 }
 
