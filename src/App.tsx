@@ -684,12 +684,18 @@ function App() {
 
     if (analysis?.result) {
       const result = analysis.result
-      if (normalizedQuestion.includes('confidence') || normalizedQuestion.includes('reliable')) {
+      if (normalizedQuestion.includes('upload') || normalizedQuestion.includes('add') || normalizedQuestion.includes('select')) {
+        answer = 'Use the Upload imagery area in the Analysis section, choose a satellite image, then enter a question and click ANALYZE. You can upload one image for a single analysis or two images for comparison.'
+      } else if (normalizedQuestion.includes('confidence') || normalizedQuestion.includes('reliable')) {
         answer = `The current analysis has a confidence score of ${result.confidence_score}% and a reliability score of ${result.reliability_score}% (${result.reliability_level}).`
       } else if (normalizedQuestion.includes('object') || normalizedQuestion.includes('building')) {
-        answer = result.detected_objects.length
-          ? `I found ${result.detected_objects.length} detected object(s): ${result.detected_objects.map((item) => item.label).join(', ')}.`
-          : 'No objects were returned for this analysis.'
+        const requestedType = normalizedQuestion.includes('building') ? 'building' : ''
+        const matchingObjects = result.detected_objects.filter((item) => !requestedType || item.object_type.toLowerCase().includes(requestedType) || item.label.toLowerCase().includes(requestedType))
+        answer = matchingObjects.length
+          ? `I found ${matchingObjects.length} matching object(s): ${matchingObjects.map((item) => `${item.label} at approximately ${item.x}% from the left and ${item.y}% from the top`).join('; ')}.`
+          : result.detected_objects.length
+            ? `The analysis found ${result.detected_objects.length} object(s), but none matched that request. Available detections: ${result.detected_objects.map((item) => item.label).join(', ')}.`
+            : 'This analysis did not detect any objects. Upload a clearer image or run ANALYZE again with a specific question such as “Identify all buildings”.'
       } else if (normalizedQuestion.includes('land') || normalizedQuestion.includes('cover') || normalizedQuestion.includes('agricultur')) {
         answer = result.land_cover_result.length
           ? `The land-cover breakdown is ${result.land_cover_result.map((item) => `${item.label} ${item.percentage}%`).join(', ')}.`
