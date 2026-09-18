@@ -92,6 +92,7 @@ function App() {
   const [placeSearchLoading, setPlaceSearchLoading] = useState(false)
   const [placeSearchError, setPlaceSearchError] = useState('')
   const [selectedPlaceName, setSelectedPlaceName] = useState('')
+  const [mapLayer, setMapLayer] = useState<'street' | 'satellite'>('satellite')
   const [voiceStatus, setVoiceStatus] = useState('idle')
   const [conversation, setConversation] = useState<Array<{ question: string; answer: string }>>([
     {
@@ -251,23 +252,15 @@ function App() {
     setPlaceSearchError('')
   }
 
-  const distanceBetween = (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
-    const earthRadius = 6371000
-    const latDelta = (to.lat - from.lat) * Math.PI / 180
-    const lngDelta = (to.lng - from.lng) * Math.PI / 180
-    const latitude = from.lat * Math.PI / 180
-    const targetLatitude = to.lat * Math.PI / 180
-    const value = Math.sin(latDelta / 2) ** 2 + Math.cos(latitude) * Math.cos(targetLatitude) * Math.sin(lngDelta / 2) ** 2
-    return earthRadius * 2 * Math.atan2(Math.sqrt(value), Math.sqrt(1 - value))
-  }
-
   const recordNearbyPermission = async (permissionStatus: 'granted' | 'denied' | 'dismissed') => {
     if (!isSupabaseConfigured || !session) return
     await supabase.from('location_permissions').insert({ user_id: session.user.id, permission_status: permissionStatus })
   }
 
   const openNearbyAnalysis = () => {
-    setNearbyPermissionMessage('SatQuery AI needs your location to analyze satellite imagery and identify potential issues in your surrounding area.')
+    setNearbyPermissionMessage(currentLocation
+      ? 'SatQuery AI will check verified satellite scene availability for the selected place and selected radius.'
+      : 'SatQuery AI needs your location to analyze satellite imagery and identify potential issues in your surrounding area.')
     setNearbyPermissionOpen(true)
     setNearbyError('')
   }
@@ -292,44 +285,11 @@ function App() {
     )
   })
 
-  const createNearbyIssues = (location: { lat: number; lng: number }, radius: number): NearbyIssue[] => {
-    if (!analysis?.result || !images.length) return []
-    const result = analysis.result
-    const changes = result.detected_changes.slice(0, 4)
-    const now = new Date().toISOString()
-    return changes.map((change, index) => {
-      const distance = Math.min(Math.max(250, Math.round(radius * (0.25 + index * 0.15))), radius)
-      const bearing = (index * 90 + 35) * Math.PI / 180
-      const latitude = location.lat + (distance * Math.cos(bearing)) / 111320
-      const longitude = location.lng + (distance * Math.sin(bearing)) / (111320 * Math.max(0.2, Math.cos(location.lat * Math.PI / 180)))
-      const measuredDistance = Math.round(distanceBetween(location, { lat: latitude, lng: longitude }))
-      const normalized = change.label.toLowerCase()
-      const category = (normalized.includes('vegetation') ? 'agriculture' : normalized.includes('water') ? 'environmental' : normalized.includes('urban') || normalized.includes('built') ? 'urban' : 'disaster') as NearbyIssue['category']
-      const severity = (Math.abs(change.percentage) > 15 ? 'HIGH' : Math.abs(change.percentage) > 7 ? 'MEDIUM' : 'LOW') as NearbyIssue['severity']
-      return {
-        id: crypto.randomUUID(),
-        issue_type: `Potential ${change.label} detected`,
-        category,
-        severity,
-        latitude,
-        longitude,
-        distance_meters: measuredDistance,
-        area: result.area_measurements.affected_area ?? null,
-        description: 'A significant surface or land-cover change was detected in the uploaded imagery. Further verification may be required.',
-        confidence: result.confidence_score,
-        reliability: result.reliability_level,
-        evidence: result.evidence_data,
-        detected_at: now,
-        reference_date: beforeDate,
-      }
-    })
-  }
-
   const runNearbyAnalysis = async () => {
     setNearbyPermissionOpen(false)
     setNearbyLoading(true)
     setNearbyError('')
-    const location = await getNearbyLocation()
+    const location = currentLocation ?? await getNearbyLocation()
     if (!location) {
       await recordNearbyPermission('denied')
       setNearbyLoading(false)
@@ -338,18 +298,18 @@ function App() {
     }
     await recordNearbyPermission('granted')
 
-    const issues = createNearbyIssues(location, nearbyRadius)
+    const issues: NearbyIssue[] = []
     const nearbyResult: NearbyIssueAnalysis = {
       id: crypto.randomUUID(),
       latitude: location.lat,
       longitude: location.lng,
       radius: nearbyRadius,
       status: 'completed',
-      mode: images.length ? 'uploaded-imagery' : 'unavailable',
+      mode: 'unavailable',
       created_at: new Date().toISOString(),
       completed_at: new Date().toISOString(),
       issues,
-      message: images.length ? 'Demo mode: results use uploaded imagery and the existing SatQuery analysis pipeline. Connect a satellite provider for production remote-sensing results.' : 'No suitable satellite imagery is currently available for this analysis. Upload imagery for the selected area to continue.',
+      message: 'Scene metadata can be searched for this area, but no georeferenced imagery analysis is available yet. SatQuery will not create issue markers without verified evidence. Upload imagery for this area in Analysis, or configure an imagery processing provider.',
       execution_trace: ['Location permission', 'Area selected', 'Satellite data availability checked', 'Image compatibility checked', 'Query/task classified', 'Specialist model selected', 'Change/anomaly analysis', 'Evidence generated', 'Confidence calculated', 'Nearby issues identified'],
     }
     setNearbyAnalysis(nearbyResult)
@@ -376,6 +336,14 @@ function App() {
     } else {
       setSatelliteSearchMessage('Configure Supabase to search Copernicus Data Space.')
     }
+  }
+
+  const clearNearbyAnalysis = () => {
+    setNearbyAnalysis(null)
+    setSelectedNearbyIssue(null)
+    setSatelliteScenes([])
+    setSatelliteSearchMessage('')
+    setNearbyError('')
   }
 
   const dismissNearbyPermission = async () => {
@@ -1115,12 +1083,13 @@ function App() {
               <div className="flex flex-wrap items-center gap-2">
                 <label className="text-xs text-slate-400">Radius
                   <select value={nearbyRadius} onChange={(event) => setNearbyRadius(Number(event.target.value))} className="ml-2 rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-slate-200">
-                    {[500, 1000, 2000, 5000, 10000].map((radius) => <option key={radius} value={radius}>{radius >= 1000 ? `${radius / 1000} km` : `${radius} m`}</option>)}
+                    {[1000, 5000, 10000].map((radius) => <option key={radius} value={radius}>{radius / 1000} km</option>)}
                   </select>
                 </label>
+                <button type="button" onClick={nearbyAnalysis ? clearNearbyAnalysis : openNearbyAnalysis} className="rounded-lg border border-cyan-400/40 px-3 py-2 text-xs text-cyan-200 hover:bg-cyan-400/10">{nearbyAnalysis ? 'Clear Analysis' : 'Analyze Area'}</button>
                 <button type="button" onClick={() => setNearbyHeatmapEnabled((current) => !current)} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300">Heatmap {nearbyHeatmapEnabled ? 'On' : 'Off'}</button>
+                <button type="button" onClick={() => setMapLayer((current) => current === 'satellite' ? 'street' : 'satellite')} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300">{mapLayer === 'satellite' ? 'Normal map' : 'Satellite map'}</button>
                 <button type="button" onClick={onGenerateNearbyReport} disabled={!nearbyAnalysis} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300 disabled:opacity-50">Generate Area Report</button>
-                <button type="button" onClick={openNearbyAnalysis} className="rounded-lg border border-cyan-400/40 px-3 py-2 text-xs text-cyan-200 hover:bg-cyan-400/10">Run again</button>
               </div>
             </div>
 
@@ -1129,10 +1098,10 @@ function App() {
             {nearbyAnalysis && !nearbyLoading && (
               <>
                 <div className="mt-5 grid gap-3 md:grid-cols-4">
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs text-slate-500">Location</div><div className="mt-1 text-sm text-slate-200">Current selected area</div></div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs text-slate-500">Location</div><div className="mt-1 truncate text-sm text-slate-200">{selectedPlaceName || locationAddress || 'Selected area'}</div></div>
                   <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs text-slate-500">Radius</div><div className="mt-1 text-sm text-slate-200">{nearbyAnalysis.radius >= 1000 ? `${nearbyAnalysis.radius / 1000} km` : `${nearbyAnalysis.radius} m`}</div></div>
                   <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs text-slate-500">Coordinates</div><div className="mt-1 font-mono text-xs text-slate-200">{nearbyAnalysis.latitude.toFixed(5)}, {nearbyAnalysis.longitude.toFixed(5)}</div></div>
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs text-slate-500">Data mode</div><div className="mt-1 text-sm text-amber-200">{nearbyAnalysis.mode === 'uploaded-imagery' ? 'Uploaded imagery demo' : 'Unavailable'}</div></div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs text-slate-500">Data mode</div><div className="mt-1 text-sm text-amber-200">{nearbyAnalysis.mode === 'uploaded-imagery' ? 'Uploaded imagery' : 'Evidence unavailable'}</div></div>
                 </div>
                 <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-xs leading-5 text-amber-100">
                   {nearbyAnalysis.message}
@@ -1152,7 +1121,7 @@ function App() {
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="text-sm font-semibold">Issues Detected</div><div className="flex gap-2"><select value={nearbyCategory} onChange={(event) => setNearbyCategory(event.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-300"><option value="all">All categories</option><option value="environmental">Environmental</option><option value="infrastructure">Infrastructure</option><option value="urban">Urban</option><option value="agriculture">Agriculture</option><option value="disaster">Disaster</option></select><label className="flex items-center gap-2 text-xs text-slate-400">Confidence <input type="range" min="0" max="100" value={nearbyConfidenceThreshold} onChange={(event) => setNearbyConfidenceThreshold(Number(event.target.value))} /></label></div></div>
                     <div className="space-y-3">
                       {nearbyAnalysis.issues.filter((issue) => (nearbyCategory === 'all' || issue.category === nearbyCategory) && (issue.confidence === null || issue.confidence >= nearbyConfidenceThreshold)).map((issue) => <button key={issue.id} type="button" onClick={() => setSelectedNearbyIssue(issue)} className={`w-full rounded-xl border p-3 text-left ${selectedNearbyIssue?.id === issue.id ? 'border-cyan-400/60 bg-cyan-400/10' : 'border-slate-800 bg-slate-900/70 hover:border-slate-600'}`}><div className="flex items-start justify-between gap-3"><div><div className="font-medium text-amber-200">⚠ {issue.issue_type}</div><div className="mt-1 text-xs text-slate-400">{(issue.distance_meters / 1000).toFixed(issue.distance_meters < 1000 ? 0 : 1)} {issue.distance_meters < 1000 ? 'm' : 'km'} from selected location · {issue.category}</div></div><span title="Severity indicates anomaly magnitude or priority, not confirmed real-world danger." className={`rounded-full px-2 py-1 text-[10px] font-semibold ${issue.severity === 'HIGH' ? 'bg-red-500/20 text-red-200' : issue.severity === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{issue.severity}</span></div><div className="mt-2 text-xs text-slate-300">Confidence: {issue.confidence === null ? 'Unavailable' : `${issue.confidence}%`} · Reliability: {issue.reliability}</div></button>)}
-                      {!nearbyAnalysis.issues.length && <div className="rounded-xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">No issue markers were created because suitable imagery or an uploaded analysis is unavailable.</div>}
+                          {!nearbyAnalysis.issues.length && <div className="rounded-xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">No verified issues detected. This is not a finding that the area is clear: georeferenced imagery analysis is unavailable, so SatQuery did not invent incidents or markers.</div>}
                     </div>
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
@@ -1161,7 +1130,7 @@ function App() {
                     <div className="mt-5"><input value={nearbyQuery} onChange={(event) => setNearbyQuery(event.target.value)} placeholder="Ask something specific about this area..." className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" /><div className="mt-2 flex flex-wrap gap-2">{['Is there any recent surface change?', 'Are there signs of flooding?', 'Has vegetation changed?', 'Has the built-up area increased?'].map((question) => <button key={question} type="button" onClick={() => setNearbyQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-cyan-400">{question}</button>)}</div></div>
                   </div>
                 </div>
-                <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">Agent execution timeline</div><div className="grid gap-2 text-xs text-slate-300 md:grid-cols-5">{nearbyAnalysis.execution_trace.map((step) => <div key={step} className="rounded-lg bg-slate-900 px-2 py-2">✓ {step}</div>)}</div></div>
+                <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">Issue summary &amp; reliability</div><p className="text-sm leading-6 text-slate-300">{nearbyAnalysis.issues.length ? 'The selected area shows indications requiring further verification.' : 'No issue summary is available because verified, georeferenced evidence was not returned for this area.'}</p><div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-3"><div><span className="text-slate-500">Source</span><div className="mt-1 text-slate-200">{satelliteScenes.length ? 'Copernicus Sentinel-2 catalogue' : 'Unavailable'}</div></div><div><span className="text-slate-500">Evidence</span><div className="mt-1 text-slate-200">{nearbyAnalysis.issues.length ? 'Uploaded/provider imagery' : 'Not sufficient'}</div></div><div><span className="text-slate-500">Reliability</span><div className="mt-1 text-amber-200">{nearbyAnalysis.issues.length ? 'Review required' : 'Unavailable'}</div></div></div><div className="mt-4 grid gap-2 text-xs text-slate-300 md:grid-cols-5">{nearbyAnalysis.execution_trace.map((step) => <div key={step} className="rounded-lg bg-slate-900 px-2 py-2">✓ {step}</div>)}</div></div>
               </>
             )}
           </div>
@@ -1412,12 +1381,12 @@ function App() {
                   <MapContainer center={safeLocation ? [safeLocation.lat, safeLocation.lng] : [20.5937, 78.9629]} zoom={7} scrollWheelZoom className="h-full w-full">
                     <MapRecenter location={safeLocation} />
                     <TileLayer
-                      attribution='&copy; OpenStreetMap contributors'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution={mapLayer === 'satellite' ? '&copy; Esri' : '&copy; OpenStreetMap contributors'}
+                      url={mapLayer === 'satellite' ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
                     />
                     {safeLocation && (
                       <>
-                        <Circle center={[safeLocation.lat, safeLocation.lng]} radius={2500} pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.18 }} />
+                        <Circle center={[safeLocation.lat, safeLocation.lng]} radius={nearbyAnalysis?.radius ?? nearbyRadius} pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.18 }} />
                         <CircleMarker center={[safeLocation.lat, safeLocation.lng]} radius={9} pathOptions={{ color: '#ffffff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }}>
                           <MapTooltip direction="top" offset={[0, -8]} permanent>
                             {selectedPlaceName ? 'Selected place' : 'You are here'}
