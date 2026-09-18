@@ -43,7 +43,7 @@ Deno.serve(async (request) => {
       }),
     ]
 
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${encodeURIComponent(geminiKey)}`, {
+    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${encodeURIComponent(geminiKey)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
