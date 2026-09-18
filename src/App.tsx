@@ -226,7 +226,7 @@ function App() {
     setPlaceSearchLoading(true)
     setPlaceSearchError('')
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=1&q=${encodeURIComponent(search)}`)
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q=${encodeURIComponent(search)}`)
       if (!response.ok) throw new Error('The place search service is currently unavailable.')
       const results = await response.json() as Array<{ display_name: string; lat: string; lon: string; type?: string }>
       setPlaceResults(results)
@@ -1355,9 +1355,9 @@ function App() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Search size={15} className="pointer-events-none absolute left-3 top-3 text-slate-500" />
-                    <input value={placeSearch} onChange={(event) => setPlaceSearch(event.target.value)} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Search any place, e.g. Bengaluru or India" aria-label="Search for a place" />
+                    <input value={placeSearch} onChange={(event) => setPlaceSearch(event.target.value)} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Search an Indian place, e.g. Bengaluru" aria-label="Search Indian places" />
                   </div>
-                  <button type="submit" disabled={!placeSearch.trim() || placeSearchLoading} className="rounded-lg bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50">{placeSearchLoading ? 'Searching...' : 'Search'}</button>
+                  <button type="submit" disabled={!placeSearch.trim() || placeSearchLoading} className="rounded-lg bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50">{placeSearchLoading ? 'Searching...' : 'Search India'}</button>
                 </div>
                 {placeResults.length > 0 && (
                   <div className="absolute left-0 right-0 top-full z-[1000] mt-1 overflow-hidden rounded-lg border border-slate-700 bg-slate-900 shadow-xl">
