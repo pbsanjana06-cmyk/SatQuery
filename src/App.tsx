@@ -87,6 +87,11 @@ function App() {
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [locationAddress, setLocationAddress] = useState('')
   const [locationStatus, setLocationStatus] = useState('Detecting your location...')
+  const [placeSearch, setPlaceSearch] = useState('')
+  const [placeResults, setPlaceResults] = useState<Array<{ display_name: string; lat: string; lon: string; type?: string }>>([])
+  const [placeSearchLoading, setPlaceSearchLoading] = useState(false)
+  const [placeSearchError, setPlaceSearchError] = useState('')
+  const [selectedPlaceName, setSelectedPlaceName] = useState('')
   const [voiceStatus, setVoiceStatus] = useState('idle')
   const [conversation, setConversation] = useState<Array<{ question: string; answer: string }>>([
     {
@@ -187,6 +192,7 @@ function App() {
           return
         }
         setCurrentLocation(location)
+        setSelectedPlaceName('')
         setLocationStatus('Using your current location')
         setLocationAddress('Finding address...')
         try {
@@ -210,6 +216,39 @@ function App() {
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     )
+  }
+
+  const searchPlaces = async () => {
+    const search = placeSearch.trim()
+    if (!search || placeSearchLoading) return
+
+    setPlaceSearchLoading(true)
+    setPlaceSearchError('')
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&addressdetails=1&q=${encodeURIComponent(search)}`)
+      if (!response.ok) throw new Error('The place search service is currently unavailable.')
+      const results = await response.json() as Array<{ display_name: string; lat: string; lon: string; type?: string }>
+      setPlaceResults(results)
+      if (!results.length) setPlaceSearchError('No places found. Try a city, landmark, district, or country name.')
+    } catch (error) {
+      setPlaceResults([])
+      setPlaceSearchError(error instanceof Error ? error.message : 'Unable to search for places.')
+    } finally {
+      setPlaceSearchLoading(false)
+    }
+  }
+
+  const selectPlace = (place: { display_name: string; lat: string; lon: string }) => {
+    const latitude = Number(place.lat)
+    const longitude = Number(place.lon)
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return
+    setCurrentLocation({ lat: latitude, lng: longitude })
+    setSelectedPlaceName(place.display_name)
+    setLocationAddress(place.display_name)
+    setLocationStatus('Selected place')
+    setPlaceSearch(place.display_name)
+    setPlaceResults([])
+    setPlaceSearchError('')
   }
 
   const distanceBetween = (from: { lat: number; lng: number }, to: { lat: number; lng: number }) => {
@@ -1343,6 +1382,26 @@ function App() {
                   <LocateFixed size={14} /> Locate me
                 </button>
               </div>
+              <form onSubmit={(event) => { event.preventDefault(); void searchPlaces() }} className="relative mb-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search size={15} className="pointer-events-none absolute left-3 top-3 text-slate-500" />
+                    <input value={placeSearch} onChange={(event) => setPlaceSearch(event.target.value)} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Search any place, e.g. Bengaluru or India" aria-label="Search for a place" />
+                  </div>
+                  <button type="submit" disabled={!placeSearch.trim() || placeSearchLoading} className="rounded-lg bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50">{placeSearchLoading ? 'Searching...' : 'Search'}</button>
+                </div>
+                {placeResults.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full z-[1000] mt-1 overflow-hidden rounded-lg border border-slate-700 bg-slate-900 shadow-xl">
+                    {placeResults.map((place) => (
+                      <button key={`${place.lat}-${place.lon}-${place.display_name}`} type="button" onClick={() => selectPlace(place)} className="block w-full border-b border-slate-800 px-3 py-2.5 text-left text-sm text-slate-200 last:border-0 hover:bg-slate-800">
+                        <span className="block truncate">{place.display_name}</span>
+                        {place.type && <span className="mt-0.5 block text-xs capitalize text-slate-500">{place.type}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {placeSearchError && <div className="mt-1 text-xs text-amber-300">{placeSearchError}</div>}
+              </form>
               <div className="mb-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-400">
                 <div>{locationStatus}</div>
                 {locationAddress && <div className="mt-1 text-slate-300">{locationAddress}</div>}
@@ -1361,7 +1420,7 @@ function App() {
                         <Circle center={[safeLocation.lat, safeLocation.lng]} radius={2500} pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.18 }} />
                         <CircleMarker center={[safeLocation.lat, safeLocation.lng]} radius={9} pathOptions={{ color: '#ffffff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }}>
                           <MapTooltip direction="top" offset={[0, -8]} permanent>
-                            You are here
+                            {selectedPlaceName ? 'Selected place' : 'You are here'}
                           </MapTooltip>
                         </CircleMarker>
                         {nearbyAnalysis && (
