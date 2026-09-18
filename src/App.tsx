@@ -226,7 +226,13 @@ function App() {
     setPlaceSearchLoading(true)
     setPlaceSearchError('')
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q=${encodeURIComponent(search)}`)
+      const normalizedSearch = search
+        .replace(/\bbanglore\b/gi, 'Bengaluru')
+        .replace(/\bbangalore\b/gi, 'Bengaluru')
+      const query = /\b(india|karnataka|bengaluru|bangalore|davanagere|mysuru|mysore|delhi|mumbai|chennai|hyderabad|pune|kolkata)\b/i.test(normalizedSearch)
+        ? normalizedSearch
+        : `${normalizedSearch}, India`
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q=${encodeURIComponent(query)}`)
       if (!response.ok) throw new Error('The place search service is currently unavailable.')
       const results = await response.json() as Array<{ display_name: string; lat: string; lon: string; type?: string }>
       setPlaceResults(results)
