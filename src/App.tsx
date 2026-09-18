@@ -11,10 +11,12 @@ import {
   Layers3,
   Map,
   MapPinned,
+  MessageCircle,
   MessageSquareText,
   Mic,
   LocateFixed,
   Search,
+  Send,
   ShieldCheck,
   Sparkles,
   Upload,
@@ -96,6 +98,9 @@ function App() {
       answer: 'Approximately 38.4% of the area is classified as agriculture in the current workspace result.',
     },
   ])
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false)
+  const [chatbotInput, setChatbotInput] = useState('')
+  const [isChatbotTyping, setIsChatbotTyping] = useState(false)
   const [analysis, setAnalysis] = useState<AnalysisRecord | null>(null)
   const [analysisError, setAnalysisError] = useState('')
   const [history, setHistory] = useState<AnalysisRecord[]>([])
@@ -661,6 +666,48 @@ function App() {
     recognition.onerror = () => setVoiceStatus('idle')
     recognition.onend = () => setVoiceStatus('idle')
     recognition.start()
+  }
+
+  const sendChatbotMessage = async () => {
+    const question = chatbotInput.trim()
+    if (!question || isChatbotTyping) return
+
+    setChatbotInput('')
+    setConversation((current) => [...current, { question, answer: '' }])
+    setIsChatbotTyping(true)
+
+    const normalizedQuestion = question.toLowerCase()
+    let answer = analysis?.result
+      ? `Based on the current analysis: ${analysis.result.summary}`
+      : 'Upload satellite imagery and run ANALYZE first. Then I can answer questions about detected objects, changes, land cover, confidence, and area measurements.'
+
+    if (analysis?.result) {
+      const result = analysis.result
+      if (normalizedQuestion.includes('confidence') || normalizedQuestion.includes('reliable')) {
+        answer = `The current analysis has a confidence score of ${result.confidence_score}% and a reliability score of ${result.reliability_score}% (${result.reliability_level}).`
+      } else if (normalizedQuestion.includes('object') || normalizedQuestion.includes('building')) {
+        answer = result.detected_objects.length
+          ? `I found ${result.detected_objects.length} detected object(s): ${result.detected_objects.map((item) => item.label).join(', ')}.`
+          : 'No objects were returned for this analysis.'
+      } else if (normalizedQuestion.includes('land') || normalizedQuestion.includes('cover') || normalizedQuestion.includes('agricultur')) {
+        answer = result.land_cover_result.length
+          ? `The land-cover breakdown is ${result.land_cover_result.map((item) => `${item.label} ${item.percentage}%`).join(', ')}.`
+          : 'No land-cover breakdown was returned for this analysis.'
+      } else if (normalizedQuestion.includes('change') || normalizedQuestion.includes('growth') || normalizedQuestion.includes('flood')) {
+        answer = result.detected_changes.length
+          ? `Detected changes: ${result.detected_changes.map((item) => `${item.label} ${item.percentage > 0 ? '+' : ''}${item.percentage}%`).join(', ')}.`
+          : 'No change metrics were returned for this analysis.'
+      } else if (normalizedQuestion.includes('area') || normalizedQuestion.includes('measure')) {
+        const measurements = Object.entries(result.area_measurements)
+        answer = measurements.length
+          ? `Estimated areas: ${measurements.map(([label, value]) => `${label.replaceAll('_', ' ')} ${value} km²`).join(', ')}.`
+          : 'No area measurements were returned for this analysis.'
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 350))
+    setConversation((current) => current.map((item, index) => index === current.length - 1 ? { ...item, answer } : item))
+    setIsChatbotTyping(false)
   }
 
   const speakAnswer = (text: string) => {
@@ -1538,6 +1585,34 @@ function App() {
             </div>
           </div>
         </section>
+
+        {isChatbotOpen && (
+          <section className="fixed bottom-24 right-4 z-50 flex w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-blue-400/30 bg-slate-950 shadow-2xl shadow-blue-950/50">
+            <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-3">
+              <div>
+                <div className="flex items-center gap-2 font-semibold text-slate-100"><MessageCircle size={17} className="text-blue-300" /> SatQuery assistant</div>
+                <div className="mt-0.5 text-xs text-slate-400">Ask about your current satellite analysis</div>
+              </div>
+              <button type="button" onClick={() => setIsChatbotOpen(false)} className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white" title="Close assistant">×</button>
+            </div>
+            <div className="max-h-80 space-y-3 overflow-y-auto p-3">
+              {conversation.slice(-6).map((item, index) => (
+                <div key={`${item.question}-${index}`} className="space-y-2 text-sm">
+                  <div className="ml-8 rounded-xl rounded-tr-sm bg-blue-500/20 px-3 py-2 text-blue-100">{item.question}</div>
+                  {item.answer ? <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-300">{item.answer}</div> : <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-500">Thinking...</div>}
+                </div>
+              ))}
+            </div>
+            <form onSubmit={(event) => { event.preventDefault(); void sendChatbotMessage() }} className="flex gap-2 border-t border-slate-800 p-3">
+              <input value={chatbotInput} onChange={(event) => setChatbotInput(event.target.value)} className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Ask a question..." aria-label="Chatbot question" />
+              <button type="submit" disabled={!chatbotInput.trim() || isChatbotTyping} className="rounded-xl bg-blue-500 p-2.5 text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50" title="Send message"><Send size={17} /></button>
+            </form>
+          </section>
+        )}
+
+        <button type="button" onClick={() => setIsChatbotOpen((open) => !open)} className="fixed bottom-6 right-4 z-50 flex items-center gap-2 rounded-full border border-blue-300/40 bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-blue-950/50 transition hover:bg-blue-400" title="Open SatQuery assistant">
+          <MessageCircle size={18} /> Chat
+        </button>
 
         <section hidden={activeSection !== 'tools'} id="tools" className="mt-6 scroll-mt-24 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
           <div className="mb-4 flex items-center gap-2 text-lg font-semibold"><CheckCircle2 size={18} className="text-blue-300" /> Area calculation</div>
