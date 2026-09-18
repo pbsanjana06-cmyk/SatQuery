@@ -23,7 +23,7 @@ import {
   VolumeX,
 } from 'lucide-react'
 import { MapContainer, Circle, CircleMarker, Marker, Popup, Rectangle, TileLayer, Tooltip as MapTooltip, useMap } from 'react-leaflet'
-import { BarChart, Bar, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { BarChart, Bar, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { generateAnalysisPdf } from './services/reportService'
 import { listAnalysisHistory, saveAnalysisResult } from './services/analysisService'
 import { analyzeWithGemini } from './services/ai/aiService'
@@ -1213,27 +1213,45 @@ function App() {
               </div>
             </div>
 
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <div className="mt-5 grid gap-4 xl:grid-cols-3">
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><BarChart3 size={15} className="text-blue-300" /> Land cover</div>
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><Activity size={15} className="text-blue-300" /> Land-cover distribution</div>
                 <div className="mt-4 h-44">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={analysis?.result?.land_cover_result ?? []}>
+                    <PieChart>
+                      <Tooltip />
+                      <Pie data={analysis?.result?.land_cover_result ?? []} dataKey="percentage" nameKey="label" cx="50%" cy="50%" innerRadius={38} outerRadius={66} paddingAngle={2}>
+                        {(analysis?.result?.land_cover_result ?? []).map((item) => <Cell key={item.label} fill={item.color} />)}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><BarChart3 size={15} className="text-blue-300" /> Change detection</div>
+                <div className="mt-4 h-44">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={analysis?.result?.detected_changes ?? []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="label" stroke="#94a3b8" tick={{ fontSize: 10 }} />
                       <YAxis stroke="#94a3b8" />
                       <Tooltip />
-                      <Bar dataKey="percentage" fill="#60a5fa" radius={[8, 8, 0, 0]} />
+                      <Bar dataKey="percentage" fill="#34d399" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><Activity size={15} className="text-blue-300" /> Change detection</div>
-                <div className="space-y-3 text-sm text-slate-300">
-                  {(analysis?.result?.detected_changes ?? []).map((change) => <div key={change.label} className="flex justify-between"><span>{change.label}</span><span className={change.percentage < 0 ? 'text-red-300' : 'text-emerald-300'}>{change.percentage > 0 ? '+' : ''}{change.percentage}%</span></div>)}
-                  {!analysis && <div className="text-xs text-slate-500">Run an analysis to populate change metrics.</div>}
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-200"><CheckCircle2 size={15} className="text-blue-300" /> Statistics</div>
+                <div className="space-y-2 text-sm text-slate-300">
+                  <div className="flex justify-between"><span>Confidence</span><span className="font-semibold text-emerald-300">{analysis?.result?.confidence_score ?? 0}%</span></div>
+                  <div className="flex justify-between"><span>Reliability</span><span className="font-semibold text-violet-300">{analysis?.result?.reliability_score ?? 0}%</span></div>
+                  <div className="flex justify-between"><span>Detected objects</span><span>{analysis?.result?.detected_objects.length ?? 0}</span></div>
+                  <div className="flex justify-between"><span>Change categories</span><span>{analysis?.result?.detected_changes.length ?? 0}</span></div>
+                  <div className="flex justify-between"><span>Land-cover classes</span><span>{analysis?.result?.land_cover_result.length ?? 0}</span></div>
+                  {Object.entries(analysis?.result?.area_measurements ?? {}).slice(0, 2).map(([label, value]) => <div key={label} className="flex justify-between gap-2"><span className="truncate">{label.replaceAll('_', ' ')}</span><span>{value} km²</span></div>)}
                 </div>
               </div>
             </div>
