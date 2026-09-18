@@ -101,6 +101,7 @@ function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false)
   const [chatbotInput, setChatbotInput] = useState('')
   const [isChatbotTyping, setIsChatbotTyping] = useState(false)
+  const [chatbotVoiceStatus, setChatbotVoiceStatus] = useState<'idle' | 'listening'>('idle')
   const [analysis, setAnalysis] = useState<AnalysisRecord | null>(null)
   const [analysisError, setAnalysisError] = useState('')
   const [history, setHistory] = useState<AnalysisRecord[]>([])
@@ -668,8 +669,8 @@ function App() {
     recognition.start()
   }
 
-  const sendChatbotMessage = async () => {
-    const question = chatbotInput.trim()
+  const sendChatbotMessage = async (message = chatbotInput) => {
+    const question = message.trim()
     if (!question || isChatbotTyping) return
 
     setChatbotInput('')
@@ -708,6 +709,32 @@ function App() {
     await new Promise((resolve) => setTimeout(resolve, 350))
     setConversation((current) => current.map((item, index) => index === current.length - 1 ? { ...item, answer } : item))
     setIsChatbotTyping(false)
+    speakAnswer(answer)
+  }
+
+  const handleChatbotVoice = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert('Voice input is not supported in this browser.')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US'
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+    recognition.onstart = () => setChatbotVoiceStatus('listening')
+    recognition.onresult = (event: any) => {
+      const transcript = String(event.results[0][0].transcript || '').trim()
+      setChatbotInput(transcript)
+      setChatbotVoiceStatus('idle')
+      if (transcript) {
+        void sendChatbotMessage(transcript)
+      }
+    }
+    recognition.onerror = () => setChatbotVoiceStatus('idle')
+    recognition.onend = () => setChatbotVoiceStatus('idle')
+    recognition.start()
   }
 
   const speakAnswer = (text: string) => {
@@ -1599,12 +1626,13 @@ function App() {
               {conversation.slice(-6).map((item, index) => (
                 <div key={`${item.question}-${index}`} className="space-y-2 text-sm">
                   <div className="ml-8 rounded-xl rounded-tr-sm bg-blue-500/20 px-3 py-2 text-blue-100">{item.question}</div>
-                  {item.answer ? <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-300">{item.answer}</div> : <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-500">Thinking...</div>}
+                  {item.answer ? <div className="mr-8 flex items-start gap-2 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-300"><span className="flex-1">{item.answer}</span><button type="button" onClick={() => isSpeaking ? stopSpeaking() : speakAnswer(item.answer)} className="shrink-0 rounded-lg p-1 text-blue-300 hover:bg-slate-800" title={isSpeaking ? 'Stop speaking' : 'Read answer aloud'}>{isSpeaking ? <VolumeX size={15} /> : <Volume2 size={15} />}</button></div> : <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-500">Thinking...</div>}
                 </div>
               ))}
             </div>
             <form onSubmit={(event) => { event.preventDefault(); void sendChatbotMessage() }} className="flex gap-2 border-t border-slate-800 p-3">
               <input value={chatbotInput} onChange={(event) => setChatbotInput(event.target.value)} className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Ask a question..." aria-label="Chatbot question" />
+              <button type="button" onClick={handleChatbotVoice} className={`rounded-xl border p-2.5 ${chatbotVoiceStatus === 'listening' ? 'border-red-400 bg-red-500/20 text-red-200' : 'border-slate-700 bg-slate-900 text-blue-200 hover:border-blue-400'}`} title={chatbotVoiceStatus === 'listening' ? 'Listening...' : 'Ask by voice'}><Mic size={17} /></button>
               <button type="submit" disabled={!chatbotInput.trim() || isChatbotTyping} className="rounded-xl bg-blue-500 p-2.5 text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50" title="Send message"><Send size={17} /></button>
             </form>
           </section>
