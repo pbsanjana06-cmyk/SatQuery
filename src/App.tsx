@@ -219,8 +219,8 @@ function App() {
     )
   }
 
-  const searchPlaces = async () => {
-    const search = placeSearch.trim()
+  const searchPlaces = async (searchOverride?: string) => {
+    const search = (searchOverride ?? placeSearch).trim()
     if (!search || placeSearchLoading) return
 
     setPlaceSearchLoading(true)
@@ -229,15 +229,16 @@ function App() {
       const normalizedSearch = search
         .replace(/\bbanglore\b/gi, 'Bengaluru')
         .replace(/\bbangalore\b/gi, 'Bengaluru')
-      const query = /\b(india|karnataka|bengaluru|bangalore|davanagere|mysuru|mysore|delhi|mumbai|chennai|hyderabad|pune|kolkata)\b/i.test(normalizedSearch)
-        ? normalizedSearch
-        : `${normalizedSearch}, India`
+      const coordinateMatch = normalizedSearch.match(/^\s*(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)\s*$/)
+      const query = coordinateMatch ? `${coordinateMatch[1]}, ${coordinateMatch[2]}` : `${normalizedSearch}, India`
       const searchNominatim = async (searchQuery: string) => {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q=${encodeURIComponent(searchQuery)}`)
         if (!response.ok) throw new Error('The place search service is currently unavailable.')
         return await response.json() as Array<{ display_name: string; lat: string; lon: string; type?: string }>
       }
-      let results = await searchNominatim(query)
+      let results = coordinateMatch
+        ? [{ display_name: `Selected coordinates: ${coordinateMatch[1]}, ${coordinateMatch[2]}`, lat: coordinateMatch[1], lon: coordinateMatch[2], type: 'coordinates' }]
+        : await searchNominatim(query)
       if (!results.length && normalizedSearch.includes(',')) {
         const locality = normalizedSearch.split(',')[0].trim()
         if (locality) results = await searchNominatim(`${locality}, India`)
@@ -251,6 +252,13 @@ function App() {
       setPlaceSearchLoading(false)
     }
   }
+
+  useEffect(() => {
+    const search = placeSearch.trim()
+    if (search.length < 3 || selectedPlaceName) return
+    const timer = window.setTimeout(() => void searchPlaces(search), 500)
+    return () => window.clearTimeout(timer)
+  }, [placeSearch, selectedPlaceName])
 
   const selectPlace = (place: { display_name: string; lat: string; lon: string }) => {
     const latitude = Number(place.lat)
@@ -1368,7 +1376,7 @@ function App() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Search size={15} className="pointer-events-none absolute left-3 top-3 text-slate-500" />
-                    <input value={placeSearch} onChange={(event) => setPlaceSearch(event.target.value)} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Search an Indian place, e.g. Bengaluru" aria-label="Search Indian places" />
+                    <input value={placeSearch} onChange={(event) => { setPlaceSearch(event.target.value); setSelectedPlaceName('') }} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Search any Indian place, address, landmark, or coordinates" aria-label="Search Indian places" />
                   </div>
                   <button type="submit" disabled={!placeSearch.trim() || placeSearchLoading} className="rounded-lg bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50">{placeSearchLoading ? 'Searching...' : 'Search India'}</button>
                 </div>
