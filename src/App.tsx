@@ -232,9 +232,16 @@ function App() {
       const query = /\b(india|karnataka|bengaluru|bangalore|davanagere|mysuru|mysore|delhi|mumbai|chennai|hyderabad|pune|kolkata)\b/i.test(normalizedSearch)
         ? normalizedSearch
         : `${normalizedSearch}, India`
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q=${encodeURIComponent(query)}`)
-      if (!response.ok) throw new Error('The place search service is currently unavailable.')
-      const results = await response.json() as Array<{ display_name: string; lat: string; lon: string; type?: string }>
+      const searchNominatim = async (searchQuery: string) => {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=in&addressdetails=1&q=${encodeURIComponent(searchQuery)}`)
+        if (!response.ok) throw new Error('The place search service is currently unavailable.')
+        return await response.json() as Array<{ display_name: string; lat: string; lon: string; type?: string }>
+      }
+      let results = await searchNominatim(query)
+      if (!results.length && normalizedSearch.includes(',')) {
+        const locality = normalizedSearch.split(',')[0].trim()
+        if (locality) results = await searchNominatim(`${locality}, India`)
+      }
       setPlaceResults(results)
       if (!results.length) setPlaceSearchError('No places found. Try a city, landmark, district, or country name.')
     } catch (error) {
