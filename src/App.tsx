@@ -255,7 +255,13 @@ function App() {
 
   useEffect(() => {
     const search = placeSearch.trim()
-    if (search.length < 3 || selectedPlaceName) return
+    if (search.length < 2 || selectedPlaceName) {
+      if (search.length < 2) {
+        setPlaceResults([])
+        setPlaceSearchError('')
+      }
+      return
+    }
     const timer = window.setTimeout(() => void searchPlaces(search), 500)
     return () => window.clearTimeout(timer)
   }, [placeSearch, selectedPlaceName])
