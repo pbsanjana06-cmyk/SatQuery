@@ -55,6 +55,20 @@ const modeOptions = [
   { label: 'Disaster Analysis', value: 'disaster' },
 ]
 
+type LanguageCode = 'en' | 'es' | 'fr' | 'hi' | 'kn' | 'te' | 'ta' | 'ml' | 'mr'
+
+const speechLocales: Record<LanguageCode, string> = {
+  en: 'en-US',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  hi: 'hi-IN',
+  kn: 'kn-IN',
+  te: 'te-IN',
+  ta: 'ta-IN',
+  ml: 'ml-IN',
+  mr: 'mr-IN',
+}
+
 function MapRecenter({ location }: { location: { lat: number; lng: number } | null }) {
   const map = useMap()
 
@@ -73,7 +87,7 @@ function App() {
   const [isDashboardOpen, setIsDashboardOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('overview')
   const [mode, setMode] = useState('single')
-  const [language, setLanguage] = useState<'en' | 'es' | 'fr'>('en')
+  const [language, setLanguage] = useState<LanguageCode>('en')
   const [beforeDate, setBeforeDate] = useState('2025-01-15')
   const [afterDate, setAfterDate] = useState('2026-01-15')
   const [images, setImages] = useState<UploadedImage[]>([])
@@ -442,7 +456,7 @@ function App() {
     },
   }
 
-  const currentLabels = translatedLabels[language]
+  const currentLabels = translatedLabels[(language === 'es' || language === 'fr' ? language : 'en')]
 
   const comparisonSummary = useMemo(() => ({
     from: new Date(beforeDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
@@ -690,7 +704,7 @@ function App() {
     }
 
     const recognition = new SpeechRecognition()
-    recognition.lang = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US'
+    recognition.lang = speechLocales[language]
     recognition.interimResults = false
     recognition.maxAlternatives = 1
     recognition.onstart = () => setVoiceStatus('listening')
@@ -764,7 +778,7 @@ function App() {
     }
 
     const recognition = new SpeechRecognition()
-    recognition.lang = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US'
+    recognition.lang = speechLocales[language]
     recognition.interimResults = false
     recognition.maxAlternatives = 1
     recognition.onstart = () => setChatbotVoiceStatus('listening')
@@ -785,7 +799,7 @@ function App() {
     if (!('speechSynthesis' in window) || !text) return
     window.speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : 'en-US'
+    utterance.lang = speechLocales[language]
     utterance.rate = 0.95
     utterance.onstart = () => setIsSpeaking(true)
     utterance.onend = () => setIsSpeaking(false)
@@ -994,10 +1008,16 @@ function App() {
             </button>
             <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200">
               <Globe2 size={16} className="text-blue-300" />
-              <select value={language} onChange={(e) => setLanguage(e.target.value as 'en' | 'es' | 'fr')} className="bg-transparent text-sm outline-none">
+              <select value={language} onChange={(e) => setLanguage(e.target.value as LanguageCode)} className="bg-transparent text-sm outline-none">
                 <option value="en">EN</option>
                 <option value="es">ES</option>
                 <option value="fr">FR</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+                <option value="te">తెలుగు</option>
+                <option value="ta">தமிழ்</option>
+                <option value="ml">മലയാളം</option>
+                <option value="mr">मराठी</option>
               </select>
             </label>
           </div>
@@ -1731,7 +1751,7 @@ function App() {
         <section hidden={activeSection !== 'tools'} className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
           <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><ShieldCheck size={18} className="text-blue-300" /> {currentLabels.multilingual}</div>
           <div className="flex flex-wrap gap-3 text-sm text-slate-200">
-            <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1">English</span>
+            <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1">English · Hindi · Kannada · Telugu · Tamil · Malayalam · Marathi</span>
             <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1">Español</span>
             <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1">Français</span>
           </div>
