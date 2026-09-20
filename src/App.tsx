@@ -201,10 +201,9 @@ function App() {
           if (!response.ok) throw new Error('Address lookup failed')
           const result = await response.json() as { display_name?: string; address?: { postcode?: string; city?: string; town?: string; village?: string; state?: string } }
           const address = result.address
-          const locality = address?.city || address?.town || address?.village
           const postalCode = address?.postcode
           setLocationAddress(postalCode
-            ? `${locality || result.display_name || 'Selected location'} · PIN code: ${postalCode}`
+            ? `${result.display_name || 'Selected location'} · PIN code: ${postalCode}`
             : result.display_name || 'Address unavailable; PIN code was not returned')
         } catch {
           setLocationAddress('Address unavailable; coordinates are shown')
