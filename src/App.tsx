@@ -139,6 +139,8 @@ function App() {
   const [nearbyHeatmapOpacity, setNearbyHeatmapOpacity] = useState(0.45)
   const [nearbyCategory, setNearbyCategory] = useState('all')
   const [nearbyConfidenceThreshold, setNearbyConfidenceThreshold] = useState(0)
+  const [proximityQuery, setProximityQuery] = useState('What important features or issues are near this location?')
+  const [proximityFeatures, setProximityFeatures] = useState<Array<{ id: string; label: string; kind: 'hospital' | 'road' | 'building' | 'river' | 'forest' | 'agriculture' | 'industry' | 'hazard'; distanceMeters: number; detail: string; priority: 'LOW' | 'MEDIUM' | 'HIGH' }>>([])
   const [satelliteScenes, setSatelliteScenes] = useState<Array<{ id: string; name?: string; acquisition: string | null; satellite: string; sensor: string; processing: string; resolution: string; cloudCover: number | string | null; productUrl: string | null }>>([])
   const [satelliteSearchMessage, setSatelliteSearchMessage] = useState('')
   const [climateData, setClimateData] = useState<{ source: string; current?: { temperature: number; feelsLike: number; humidity: number; precipitation: number; windSpeed: number; weatherCode: number }; daily?: Array<{ date: string; max: number; min: number; precipitationProbability: number; precipitation: number; weatherCode: number }>; risks?: Array<{ type: string; level: string; confidence: string; evidence: string[] }>; message?: string } | null>(null)
@@ -406,6 +408,7 @@ function App() {
       execution_trace: ['Location permission', 'Current GPS position captured', 'Nearby radius selected', 'Local pattern scan completed', 'Issue categories scored', 'Confidence flagged', 'Review guidance generated'],
     }
     setNearbyAnalysis(nearbyResult)
+    setProximityFeatures(generateProximityFeatures(location, proximityQuery))
     setSelectedNearbyIssue(issues[0] ?? null)
     setNearbyLoading(false)
     setActiveSection('nearby')
@@ -1243,6 +1246,31 @@ function App() {
                       ? 'Verified issue markers in this radius are limited to evidence returned for the selected area.'
                       : 'No verified nearby issue markers were found for this live location, so the app is not reporting a confirmed issue without evidence.'}
                   </p>
+                </div>
+                <div className="mt-5 rounded-xl border border-blue-400/20 bg-blue-400/5 p-4">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="text-sm font-semibold text-blue-100">Proximity &amp; Nearby Feature Analysis</div>
+                    <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">Current location</div>
+                  </div>
+                  <input value={proximityQuery} onChange={(event) => setProximityQuery(event.target.value)} placeholder="What important features or issues are near this location?" className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" />
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {['What important features or issues are near this location?', 'Find all major roads within 2 km of this location.', 'Show nearby hospitals and water features.', 'List hazards and built-up areas near me.'].map((question) => (
+                      <button key={question} type="button" onClick={() => setProximityQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-blue-400">{question}</button>
+                    ))}
+                  </div>
+                  <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                    {proximityFeatures.length ? proximityFeatures.map((feature) => (
+                      <div key={feature.id} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-sm font-medium text-slate-100">{feature.label}</div>
+                          <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${feature.priority === 'HIGH' ? 'bg-red-500/20 text-red-200' : feature.priority === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{feature.priority}</span>
+                        </div>
+                        <div className="mt-2 text-xl font-semibold text-blue-200">{feature.distanceMeters} m</div>
+                        <div className="mt-1 text-[11px] leading-5 text-slate-400">{feature.detail}</div>
+                      </div>
+                    )) : <div className="col-span-full rounded-xl border border-dashed border-slate-700 p-4 text-xs text-slate-400">No proximity features were calculated for this location yet. Click Locate me or choose a place to generate nearby feature details.</div>}
+                  </div>
+                  <div className="mt-3 text-xs text-slate-400">Example: Hospital → 1.2 km; Main road → 350 m; Lake → 800 m; Built-up area → 150 m; Detected hazard → 420 m.</div>
                 </div>
                 <div className="mt-4 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
