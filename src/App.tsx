@@ -338,6 +338,39 @@ function App() {
     )
   })
 
+  const generateProximityFeatures = (location: { lat: number; lng: number }, queryOverride?: string) => {
+    const seed = Math.abs(Math.round(location.lat * 100000 + location.lng * 100000))
+    const askedAbout = (queryOverride ?? proximityQuery).toLowerCase()
+
+    const features = [
+      { id: 'hospital', label: 'Hospital', kind: 'hospital' as const, distanceMeters: 1200 + ((seed + 17) % 500), detail: 'Emergency care access within the local area.', priority: 'MEDIUM' as const },
+      { id: 'road', label: 'Main road', kind: 'road' as const, distanceMeters: 350 + ((seed + 49) % 500), detail: 'Primary transport corridor adjacent to the selected point.', priority: 'LOW' as const },
+      { id: 'building', label: 'Built-up area', kind: 'building' as const, distanceMeters: 150 + ((seed + 81) % 450), detail: 'Dense settlement cluster near the selected coordinate.', priority: 'LOW' as const },
+      { id: 'river', label: 'River / water body', kind: 'river' as const, distanceMeters: 800 + ((seed + 111) % 600), detail: 'Water feature within proximity and flood-risk consideration area.', priority: 'HIGH' as const },
+      { id: 'forest', label: 'Forest patch', kind: 'forest' as const, distanceMeters: 1400 + ((seed + 139) % 700), detail: 'Vegetated area close to the selected location.', priority: 'LOW' as const },
+      { id: 'agriculture', label: 'Agricultural area', kind: 'agriculture' as const, distanceMeters: 900 + ((seed + 177) % 800), detail: 'Crop or field pattern in the surrounding zone.', priority: 'MEDIUM' as const },
+      { id: 'industry', label: 'Industrial area', kind: 'industry' as const, distanceMeters: 1800 + ((seed + 211) % 900), detail: 'Industrial footprint within the wider neighborhood radius.', priority: 'MEDIUM' as const },
+      { id: 'hazard', label: 'Potential hazard', kind: 'hazard' as const, distanceMeters: 420 + ((seed + 333) % 380), detail: 'Surface disturbance or drainage risk near this point.', priority: 'HIGH' as const },
+    ]
+
+    if (!askedAbout.includes('road') && !askedAbout.includes('hospital') && !askedAbout.includes('water') && !askedAbout.includes('building') && !askedAbout.includes('forest') && !askedAbout.includes('agriculture') && !askedAbout.includes('industrial') && !askedAbout.includes('hazard') && !askedAbout.includes('flood') && !askedAbout.includes('risk') && !askedAbout.includes('change')) {
+      return features
+    }
+
+    return features.filter((feature) => {
+      const kindText = feature.kind.toLowerCase()
+      if (askedAbout.includes('road') || askedAbout.includes('highway')) return kindText === 'road'
+      if (askedAbout.includes('hospital') || askedAbout.includes('clinic')) return kindText === 'hospital'
+      if (askedAbout.includes('water') || askedAbout.includes('lake') || askedAbout.includes('flood')) return kindText === 'river'
+      if (askedAbout.includes('building') || askedAbout.includes('settlement')) return kindText === 'building'
+      if (askedAbout.includes('forest') || askedAbout.includes('tree')) return kindText === 'forest'
+      if (askedAbout.includes('agriculture') || askedAbout.includes('farm')) return kindText === 'agriculture'
+      if (askedAbout.includes('industrial') || askedAbout.includes('factory')) return kindText === 'industry'
+      if (askedAbout.includes('hazard') || askedAbout.includes('risk') || askedAbout.includes('change')) return kindText === 'hazard'
+      return true
+    })
+  }
+
   const generateNearbyIssues = (location: { lat: number; lng: number }, radius: number): NearbyIssue[] => {
     const templates = [
       { issue_type: 'Vegetation stress', category: 'agriculture' as const, severity: 'MEDIUM' as const, description: 'Patchy vegetation response suggests local crop or land-cover stress in the surrounding zone.', confidence: 78, reliability: 'MEDIUM' as const },
