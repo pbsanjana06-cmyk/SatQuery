@@ -540,6 +540,26 @@ function App() {
     ? currentLocation
     : null
 
+  const nearbyIssueCategories = useMemo(() => {
+    const categories = [
+      { key: 'environmental', label: 'Environmental', accent: 'emerald', description: 'Water, vegetation or land-cover change' },
+      { key: 'infrastructure', label: 'Infrastructure', accent: 'cyan', description: 'Roads, utilities, or built assets' },
+      { key: 'urban', label: 'Urban', accent: 'amber', description: 'Built-up growth or mixed-use change' },
+      { key: 'agriculture', label: 'Agriculture', accent: 'lime', description: 'Crop pattern or field stress' },
+      { key: 'disaster', label: 'Disaster', accent: 'rose', description: 'Flooding or storm-related risk' },
+    ] as const
+
+    const counts: Record<string, number> = Object.fromEntries(categories.map((category) => [category.key, 0]))
+    for (const issue of nearbyAnalysis?.issues ?? []) {
+      counts[issue.category] = (counts[issue.category] ?? 0) + 1
+    }
+
+    return categories.map((category) => ({
+      ...category,
+      count: counts[category.key] ?? 0,
+    }))
+  }, [nearbyAnalysis])
+
   const datasetEvidence = {
     dataset: 'BigEarthNet.txt',
     sensors: 'Sentinel-1 SAR + Sentinel-2 multispectral',
@@ -1164,6 +1184,23 @@ function App() {
                   {nearbyAnalysis.message}
                   {!images.length && <button type="button" onClick={() => goToSection('analysis')} className="ml-3 rounded-lg border border-cyan-400/40 px-2 py-1 text-cyan-200 hover:bg-cyan-400/10">Upload area imagery</button>}
                   <div className="mt-2 flex items-center gap-2 text-slate-400">Heatmap opacity <input type="range" min="0" max="1" step="0.05" value={nearbyHeatmapOpacity} onChange={(event) => setNearbyHeatmapOpacity(Number(event.target.value))} /></div>
+                </div>
+                <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                  <div className="mb-3 text-sm font-semibold text-slate-100">Issues around your location</div>
+                  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+                    {nearbyIssueCategories.map((category) => (
+                      <div key={category.key} className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+                        <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400">{category.label}</div>
+                        <div className={`mt-2 text-2xl font-semibold ${category.accent === 'emerald' ? 'text-emerald-300' : category.accent === 'cyan' ? 'text-cyan-300' : category.accent === 'amber' ? 'text-amber-300' : category.accent === 'lime' ? 'text-lime-300' : 'text-rose-300'}`}>{category.count}</div>
+                        <div className="mt-1 text-[11px] leading-4 text-slate-400">{category.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-slate-400">
+                    {nearbyAnalysis.issues.length
+                      ? 'Verified issue markers in this radius are limited to evidence returned for the selected area.'
+                      : 'No verified nearby issue markers were found for this live location, so the app is not reporting a confirmed issue without evidence.'}
+                  </p>
                 </div>
                 <div className="mt-4 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
