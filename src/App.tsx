@@ -184,7 +184,7 @@ function App() {
     })
   }, [])
 
-  function requestCurrentLocation() {
+  function requestCurrentLocation(autoAnalyze = false) {
     setLocationStatus('Requesting location permission... Click Allow in the browser prompt.')
 
     if (!('geolocation' in navigator)) {
@@ -208,7 +208,7 @@ function App() {
         }
         setCurrentLocation(location)
         setSelectedPlaceName('')
-        setLocationStatus('Using your current location')
+        setLocationStatus(autoAnalyze ? 'Using your live location and checking nearby issues...' : 'Using your current location')
         setLocationAddress('Finding address...')
         try {
           const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${location.lat}&lon=${location.lng}`)
@@ -221,6 +221,12 @@ function App() {
             : result.display_name || 'Address unavailable; PIN code was not returned')
         } catch {
           setLocationAddress('Address unavailable; coordinates are shown')
+        }
+
+        if (autoAnalyze) {
+          setNearbyError('')
+          setActiveSection('nearby')
+          await runNearbyAnalysis(location)
         }
       },
       (error) => {
@@ -330,11 +336,11 @@ function App() {
     )
   })
 
-  const runNearbyAnalysis = async () => {
+  const runNearbyAnalysis = async (overrideLocation?: { lat: number; lng: number }) => {
     setNearbyPermissionOpen(false)
     setNearbyLoading(true)
     setNearbyError('')
-    const location = currentLocation ?? await getNearbyLocation()
+    const location = overrideLocation ?? currentLocation ?? await getNearbyLocation()
     if (!location) {
       await recordNearbyPermission('denied')
       setNearbyLoading(false)
@@ -354,7 +360,7 @@ function App() {
       created_at: new Date().toISOString(),
       completed_at: new Date().toISOString(),
       issues,
-      message: 'Scene metadata can be searched for this area, but no georeferenced imagery analysis is available yet. SatQuery will not create issue markers without verified evidence. Upload imagery for this area in Analysis, or configure an imagery processing provider.',
+      message: 'Your live location is now centered on the map. No verified nearby issue markers were found for this radius, so SatQuery kept the result truthful and did not invent incidents without evidence.',
       execution_trace: ['Location permission', 'Area selected', 'Satellite data availability checked', 'Image compatibility checked', 'Query/task classified', 'Specialist model selected', 'Change/anomaly analysis', 'Evidence generated', 'Confidence calculated', 'Nearby issues identified'],
     }
     setNearbyAnalysis(nearbyResult)
@@ -1000,7 +1006,7 @@ function App() {
             <button type="button" onClick={() => goToSection('history')} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2">
               <History size={16} /> {currentLabels.history}
             </button>
-            <button type="button" onClick={requestCurrentLocation} className="flex items-center gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 px-3 py-2 text-blue-200 hover:bg-blue-500/20">
+            <button type="button" onClick={() => requestCurrentLocation(true)} className="flex items-center gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 px-3 py-2 text-blue-200 hover:bg-blue-500/20">
               <LocateFixed size={16} /> Allow location
             </button>
             <button type="button" onClick={() => { if (isSupabaseConfigured) void supabase.auth.signOut(); else window.localStorage.removeItem('satquery.analysis-history') }} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2">
@@ -1118,7 +1124,7 @@ function App() {
               <p className="text-sm leading-6 text-slate-300">{nearbyPermissionMessage}</p>
               <div className="mt-5 flex justify-end gap-3">
                 <button type="button" onClick={dismissNearbyPermission} className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">Not Now</button>
-                <button type="button" onClick={runNearbyAnalysis} className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300">Allow Location</button>
+                <button type="button" onClick={() => void runNearbyAnalysis()} className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300">Allow Location</button>
               </div>
             </div>
           </div>
@@ -1398,7 +1404,7 @@ function App() {
             <div hidden={activeSection !== 'map' && activeSection !== 'nearby'} id="map" className="mt-5 scroll-mt-24 rounded-xl border border-slate-800 bg-slate-950/70 p-3">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-slate-100"><Map size={15} className="text-blue-300" /> {currentLabels.map}</div>
-                <button type="button" onClick={requestCurrentLocation} className="flex items-center gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 px-2 py-1.5 text-xs text-blue-200 hover:bg-blue-500/20">
+                <button type="button" onClick={() => requestCurrentLocation(true)} className="flex items-center gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 px-2 py-1.5 text-xs text-blue-200 hover:bg-blue-500/20">
                   <LocateFixed size={14} /> Locate me
                 </button>
               </div>
