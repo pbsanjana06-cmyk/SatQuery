@@ -30,6 +30,7 @@ import { generateAnalysisPdf } from './services/reportService'
 import { listAnalysisHistory, saveAnalysisResult } from './services/analysisService'
 import { analyzeWithGemini } from './services/ai/aiService'
 import { validateImageFile } from './services/imageService'
+import { fetchNearbyFeatures } from './services/proximityService'
 import { isSupabaseConfigured, supabase } from './lib/supabase'
 import { AuthPage } from './components/AuthPage'
 import type { Session } from '@supabase/supabase-js'
@@ -153,8 +154,8 @@ function App() {
   const stats = useMemo(
     () => [
       { label: 'Total Analyses', value: String(history.length) },
-      { label: 'Images Processed', value: String(history.reduce((total, item) => total + item.images.length, 0)) },
-      { label: 'Average Confidence', value: history.length ? `${(history.reduce((total, item) => total + item.confidence_score, 0) / history.length).toFixed(1)}%` : '—' },
+      { label: 'Images Processed', value: String(history.reduce((total, item) => total + (item.images?.length ?? 0), 0)) },
+      { label: 'Average Confidence', value: history.length ? `${(history.reduce((total, item) => total + (item.confidence_score ?? 0), 0) / history.length).toFixed(1)}%` : '—' },
       { label: 'Change Detection', value: String(history.filter((item) => item.type === 'change_detection' || item.type === 'before_after').length) },
     ],
     [history],
@@ -371,6 +372,72 @@ function App() {
     })
   }
 
+  const loadProximityFeatures = async (location: { lat: number; lng: number }, queryOverride?: string) => {
+    const askedAbout = (queryOverride ?? proximityQuery).toLowerCase()
+
+    const issueKeywords = ['hospital', 'road', 'highway', 'water', 'lake', 'river', 'flood', 'risk', 'hazard', 'forest', 'farm', 'agriculture', 'industrial', 'factory', 'building', 'change', 'drainage', 'storm']
+
+    try {
+      const nearbyFeatures = await fetchNearbyFeatures(location.lat, location.lng, nearbyRadius)
+
+      const filteredFeatures = nearbyFeatures.filter((feature) => {
+        const haystack = `${feature.name} ${feature.type} ${feature.category}`.toLowerCase()
+
+        const isIssueLike =
+          feature.priority === 'HIGH' ||
+          issueKeywords.some((keyword) => haystack.includes(keyword)) ||
+          feature.category === 'hazard' ||
+          feature.category === 'road' ||
+          feature.category === 'river' ||
+          feature.category === 'industry' ||
+          feature.category === 'agriculture'
+
+        const shouldShowIfNoFilter = !issueKeywords.some((keyword) => askedAbout.includes(keyword))
+
+        if (shouldShowIfNoFilter) return isIssueLike
+
+        if (askedAbout.includes('road') || askedAbout.includes('highway')) return feature.category === 'road'
+        if (askedAbout.includes('hospital') || askedAbout.includes('clinic')) return feature.category === 'hospital'
+        if (askedAbout.includes('water') || askedAbout.includes('lake') || askedAbout.includes('flood')) return feature.category === 'river'
+        if (askedAbout.includes('building') || askedAbout.includes('settlement')) return feature.category === 'building'
+        if (askedAbout.includes('forest') || askedAbout.includes('tree')) return feature.category === 'forest'
+        if (askedAbout.includes('agriculture') || askedAbout.includes('farm')) return feature.category === 'agriculture'
+        if (askedAbout.includes('industrial') || askedAbout.includes('factory')) return feature.category === 'industry'
+        if (askedAbout.includes('hazard') || askedAbout.includes('risk') || askedAbout.includes('change')) return feature.priority === 'HIGH' || feature.category === 'hazard'
+
+        return isIssueLike
+      })
+
+      const mappedFeatures = (filteredFeatures.length ? filteredFeatures : nearbyFeatures.filter((feature) => issueKeywords.some((keyword) => `${feature.name} ${feature.type}`.toLowerCase().includes(keyword)) || feature.priority === 'HIGH')).slice(0, 8).map((feature) => ({
+        id: feature.id,
+        label: feature.name,
+        kind: feature.category,
+        distanceMeters: feature.distanceMeters,
+        detail: feature.detail,
+        priority: feature.priority,
+      }))
+
+      setProximityFeatures(mappedFeatures)
+      if (mappedFeatures.length) {
+        setNearbyError('')
+      }
+      return
+    } catch {
+      const fallbackFeatures = generateProximityFeatures(location, queryOverride)
+      const filteredFallback = fallbackFeatures.filter((feature) => [
+        'hospital',
+        'road',
+        'river',
+        'forest',
+        'agriculture',
+        'industry',
+        'hazard',
+      ].includes(feature.kind))
+      setProximityFeatures(filteredFallback.length ? filteredFallback : fallbackFeatures)
+      setNearbyError('OpenStreetMap could not be reached, so the app loaded a local fallback set of nearby features.')
+    }
+  }
+
   const generateNearbyIssues = (location: { lat: number; lng: number }, radius: number): NearbyIssue[] => {
     const templates = [
       { issue_type: 'Vegetation stress', category: 'agriculture' as const, severity: 'MEDIUM' as const, description: 'Patchy vegetation response suggests local crop or land-cover stress in the surrounding zone.', confidence: 78, reliability: 'MEDIUM' as const },
@@ -441,7 +508,7 @@ function App() {
       execution_trace: ['Location permission', 'Current GPS position captured', 'Nearby radius selected', 'Local pattern scan completed', 'Issue categories scored', 'Confidence flagged', 'Review guidance generated'],
     }
     setNearbyAnalysis(nearbyResult)
-    setProximityFeatures(generateProximityFeatures(location, proximityQuery))
+    await loadProximityFeatures(location, proximityQuery)
     setSelectedNearbyIssue(issues[0] ?? null)
     setNearbyLoading(false)
     setActiveSection('nearby')
@@ -550,6 +617,26 @@ function App() {
     water: '+4.1%',
   }), [beforeDate, afterDate])
 
+  const nearbyIssueCategories = useMemo(() => {
+    const categories = [
+      { key: 'environmental', label: 'Environmental', accent: 'emerald', description: 'Water, vegetation or land-cover change' },
+      { key: 'infrastructure', label: 'Infrastructure', accent: 'cyan', description: 'Roads, utilities, or built assets' },
+      { key: 'urban', label: 'Urban', accent: 'amber', description: 'Built-up growth or mixed-use change' },
+      { key: 'agriculture', label: 'Agriculture', accent: 'lime', description: 'Crop pattern or field stress' },
+      { key: 'disaster', label: 'Disaster', accent: 'rose', description: 'Flooding or storm-related risk' },
+    ] as const
+
+    const counts: Record<string, number> = Object.fromEntries(categories.map((category) => [category.key, 0]))
+    for (const issue of nearbyAnalysis?.issues ?? []) {
+      counts[issue.category] = (counts[issue.category] ?? 0) + 1
+    }
+
+    return categories.map((category) => ({
+      ...category,
+      count: counts[category.key] ?? 0,
+    }))
+  }, [nearbyAnalysis])
+
   useEffect(() => {
     const handleKeyboardShortcut = (event: KeyboardEvent) => {
       const isMetaKey = event.metaKey || event.ctrlKey
@@ -571,6 +658,44 @@ function App() {
     window.addEventListener('keydown', handleKeyboardShortcut)
     return () => window.removeEventListener('keydown', handleKeyboardShortcut)
   }, [isSearchOpen])
+
+  const detectTarget = (text: string) => {
+    const lowercase = text.toLowerCase()
+    if (lowercase.includes('building')) return 'building'
+    if (lowercase.includes('road')) return 'road'
+    if (lowercase.includes('water')) return 'water_body'
+    if (lowercase.includes('agricultural')) return 'agricultural_field'
+    return 'building'
+  }
+
+  const highlightedObjectType = detectTarget(query)
+  const safeLocation = currentLocation && Number.isFinite(currentLocation.lat) && Number.isFinite(currentLocation.lng)
+    ? currentLocation
+    : null
+
+  const hotspotClusters = useMemo(() => {
+    if (!nearbyAnalysis?.issues.length) return []
+
+    return nearbyAnalysis.issues
+      .map((issue) => {
+        const severityWeight = issue.severity === 'HIGH' ? 35 : issue.severity === 'MEDIUM' ? 22 : 12
+        const confidence = issue.confidence ?? 0
+        const distancePenalty = Math.min(Math.round(issue.distance_meters / 100), 18)
+        const score = Math.min(99, Math.round(severityWeight + confidence + 12 - distancePenalty))
+
+        return {
+          id: issue.id,
+          label: issue.issue_type,
+          distanceMeters: Math.round(issue.distance_meters),
+          score,
+          severity: issue.severity,
+          description: issue.description,
+          category: issue.category,
+        }
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4)
+  }, [nearbyAnalysis])
 
   if (isAuthLoading) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-300">Checking your SatQuery session...</div>
@@ -603,40 +728,6 @@ function App() {
       </div>
     )
   }
-
-  const detectTarget = (text: string) => {
-    const lowercase = text.toLowerCase()
-    if (lowercase.includes('building')) return 'building'
-    if (lowercase.includes('road')) return 'road'
-    if (lowercase.includes('water')) return 'water_body'
-    if (lowercase.includes('agricultural')) return 'agricultural_field'
-    return 'building'
-  }
-
-  const highlightedObjectType = detectTarget(query)
-  const safeLocation = currentLocation && Number.isFinite(currentLocation.lat) && Number.isFinite(currentLocation.lng)
-    ? currentLocation
-    : null
-
-  const nearbyIssueCategories = useMemo(() => {
-    const categories = [
-      { key: 'environmental', label: 'Environmental', accent: 'emerald', description: 'Water, vegetation or land-cover change' },
-      { key: 'infrastructure', label: 'Infrastructure', accent: 'cyan', description: 'Roads, utilities, or built assets' },
-      { key: 'urban', label: 'Urban', accent: 'amber', description: 'Built-up growth or mixed-use change' },
-      { key: 'agriculture', label: 'Agriculture', accent: 'lime', description: 'Crop pattern or field stress' },
-      { key: 'disaster', label: 'Disaster', accent: 'rose', description: 'Flooding or storm-related risk' },
-    ] as const
-
-    const counts: Record<string, number> = Object.fromEntries(categories.map((category) => [category.key, 0]))
-    for (const issue of nearbyAnalysis?.issues ?? []) {
-      counts[issue.category] = (counts[issue.category] ?? 0) + 1
-    }
-
-    return categories.map((category) => ({
-      ...category,
-      count: counts[category.key] ?? 0,
-    }))
-  }, [nearbyAnalysis])
 
   const datasetEvidence = {
     dataset: 'BigEarthNet.txt',
@@ -922,6 +1013,8 @@ function App() {
     { label: 'Overview', value: 'overview', keywords: ['dashboard', 'summary', 'home', 'welcome', 'stats'] },
     { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'bigearthnet', 'data', 'benchmark', 'sentinel', 'land cover'] },
     { label: 'AI Nearby Issues', value: 'nearby', keywords: ['nearby', 'area', 'issues', 'satellite', 'location', 'anomaly'] },
+    { label: 'Proximity Analysis', value: 'proximity', keywords: ['proximity', 'nearby features', 'hospitals', 'roads', 'rivers', 'hazards', 'location'] },
+    { label: 'Hotspot Analysis', value: 'hotspots', keywords: ['hotspots', 'risk', 'cluster', 'priority', 'hazard', 'warning'] },
     { label: 'Climate & Early Warning', value: 'climate', keywords: ['climate', 'weather', 'forecast', 'warning', 'risk', 'rain'] },
     { label: 'Analysis', value: 'analysis', keywords: ['analysis', 'upload', 'question', 'ai', 'image', 'query'] },
     { label: 'Satellite map', value: 'map', keywords: ['map', 'location', 'geolocation', 'coordinates', 'viewport', 'geospatial'] },
@@ -938,6 +1031,8 @@ function App() {
     { label: 'Analyze image', value: 'analysis', group: 'Action', keywords: ['analyze', 'image', 'question', 'upload', 'run analysis'] },
     { label: 'Analyze climate', value: 'climate', group: 'Action', keywords: ['climate', 'weather', 'forecast', 'warning'] },
     { label: 'Analyze my area', value: 'nearby', group: 'Action', keywords: ['area', 'nearby', 'location', 'issues', 'surrounding'] },
+    { label: 'Open proximity analysis', value: 'proximity', group: 'Action', keywords: ['proximity', 'nearby features', 'roads', 'hospitals', 'water', 'hazards'] },
+    { label: 'Open hotspot analysis', value: 'hotspots', group: 'Action', keywords: ['hotspot', 'risk cluster', 'priority', 'warning', 'danger'] },
     { label: 'Generate PDF report', value: 'results', group: 'Action', keywords: ['pdf', 'report', 'download', 'export'] },
     { label: 'View history', value: 'history', group: 'Action', keywords: ['history', 'past', 'saved', 'records'] },
   ]
@@ -1026,13 +1121,13 @@ function App() {
                 )
               ) : (
                 <div className="space-y-2">
-                  {['Analysis', 'Climate', 'Nearby', 'Map', 'History'].map((quick) => (
+                  {['Analysis', 'Climate', 'Nearby', 'Proximity', 'Hotspots', 'Map', 'History'].map((quick) => (
                     <button
                       key={quick}
                       type="button"
                       onClick={() => {
                         const mapped = quick.toLowerCase()
-                        const target = mapped === 'analysis' ? 'analysis' : mapped === 'climate' ? 'climate' : mapped === 'nearby' ? 'nearby' : mapped === 'map' ? 'map' : 'history'
+                        const target = mapped === 'analysis' ? 'analysis' : mapped === 'climate' ? 'climate' : mapped === 'nearby' ? 'nearby' : mapped === 'proximity' ? 'proximity' : mapped === 'hotspots' ? 'hotspots' : mapped === 'map' ? 'map' : 'history'
                         closeSearch()
                         goToSection(target)
                       }}
@@ -1130,7 +1225,7 @@ function App() {
 
       <main className="mx-auto max-w-7xl px-4 py-6">
         <nav className="mb-5 flex gap-2 overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/80 p-2 text-sm lg:hidden">
-          {[['overview', 'Overview'], ['dataset', 'Dataset'], ['nearby', 'Nearby'], ['climate', 'Climate'], ['analysis', 'Analysis'], ['map', 'Map'], ['results', 'Results'], ['provenance', 'Provenance'], ['history', 'History'], ['modes', 'Modes'], ['comparison', 'Sensors'], ['tools', 'Tools']].map(([section, label]) => (
+          {[['overview', 'Overview'], ['dataset', 'Dataset'], ['nearby', 'Nearby'], ['proximity', 'Proximity'], ['hotspots', 'Hotspots'], ['climate', 'Climate'], ['analysis', 'Analysis'], ['map', 'Map'], ['results', 'Results'], ['provenance', 'Provenance'], ['history', 'History'], ['modes', 'Modes'], ['comparison', 'Sensors'], ['tools', 'Tools']].map(([section, label]) => (
             <button key={section} type="button" onClick={() => goToSection(section)} className={`whitespace-nowrap rounded-lg px-3 py-2 ${activeSection === section ? 'bg-blue-500/15 text-blue-200' : 'text-slate-300 hover:bg-blue-500/10 hover:text-blue-200'}`}>{label}</button>
           ))}
         </nav>
@@ -1150,8 +1245,85 @@ function App() {
               <h2 className="text-xl font-bold text-white">Analyze your selected area using satellite imagery and AI.</h2>
               <p className="mt-2 max-w-2xl text-sm text-slate-400">SatQuery checks for potential environmental, infrastructure, urban, agriculture, and disaster-related changes. Results are situational awareness, not confirmed hazards.</p>
             </div>
-            <button type="button" onClick={openNearbyAnalysis} className="flex items-center gap-2 rounded-xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 shadow-lg shadow-cyan-400/20 hover:bg-cyan-300"><LocateFixed size={18} /> Analyze My Area</button>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={openNearbyAnalysis} className="flex items-center gap-2 rounded-xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 shadow-lg shadow-cyan-400/20 hover:bg-cyan-300"><LocateFixed size={18} /> Analyze My Area</button>
+              <button type="button" onClick={() => goToSection('proximity')} className="rounded-xl border border-cyan-400/40 px-4 py-3 text-sm font-medium text-cyan-200 hover:bg-cyan-400/10">Open Proximity Analysis</button>
+            </div>
           </div>
+        </section>
+
+        <section hidden={activeSection !== 'proximity'} id="proximity" className="mb-6 scroll-mt-24 rounded-2xl border border-blue-400/20 bg-blue-400/5 p-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-blue-200"><MapPinned size={15} /> Proximity Analysis</div>
+              <h2 className="mt-2 text-xl font-bold text-white">Proximity &amp; Nearby Feature Analysis</h2>
+            </div>
+            <button type="button" onClick={() => void runNearbyAnalysis()} className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-400">Refresh features</button>
+          </div>
+
+          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="text-sm font-semibold text-blue-100">Nearby feature search</div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">Current location</div>
+            </div>
+            <input value={proximityQuery} onChange={(event) => setProximityQuery(event.target.value)} placeholder="What important features or issues are near this location?" className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" />
+            <div className="mt-3 flex flex-wrap gap-2">
+              {['What important features or issues are near this location?', 'Find all major roads within 2 km of this location.', 'Show nearby hospitals and water features.', 'List hazards and built-up areas near me.'].map((question) => (
+                <button key={question} type="button" onClick={() => setProximityQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-blue-400">{question}</button>
+              ))}
+            </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {proximityFeatures.length ? proximityFeatures.map((feature) => (
+                <div key={feature.id} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-sm font-medium text-slate-100">{feature.label}</div>
+                    <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${feature.priority === 'HIGH' ? 'bg-red-500/20 text-red-200' : feature.priority === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{feature.priority}</span>
+                  </div>
+                  <div className="mt-2 text-xl font-semibold text-blue-200">{feature.distanceMeters} m</div>
+                  <div className="mt-1 text-[11px] leading-5 text-slate-400">{feature.detail}</div>
+                </div>
+              )) : <div className="col-span-full rounded-xl border border-dashed border-slate-700 p-4 text-xs text-slate-400">No proximity features were calculated for this location yet. Click the refresh button or allow location access to generate nearby detail.</div>}
+            </div>
+            <div className="mt-3 text-xs text-slate-400">Example: Hospital → 1.2 km; Main road → 350 m; Lake → 800 m; Built-up area → 150 m; Detected hazard → 420 m.</div>
+          </div>
+        </section>
+
+        <section hidden={activeSection !== 'hotspots'} id="hotspots" className="mb-6 scroll-mt-24 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-amber-200"><ShieldCheck size={15} /> Hotspot Analysis</div>
+              <h2 className="mt-2 text-xl font-bold text-white">Risk clusters near the selected location</h2>
+            </div>
+            <button type="button" onClick={() => { if (currentLocation) void runNearbyAnalysis(currentLocation) }} className="rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300">Refresh hotspots</button>
+          </div>
+
+          {!hotspotClusters.length ? (
+            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-950/50 p-5 text-sm text-slate-400">
+              No hotspot clusters are available yet. Run a nearby analysis to rank the risk areas around your selected location.
+            </div>
+          ) : (
+            <div className="grid gap-4 lg:grid-cols-2">
+              {hotspotClusters.map((cluster) => (
+                <div key={cluster.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-100">{cluster.label}</div>
+                      <div className="mt-2 text-[10px] uppercase tracking-[0.2em] text-slate-500">{cluster.category}</div>
+                    </div>
+                    <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${cluster.severity === 'HIGH' ? 'bg-red-500/20 text-red-200' : cluster.severity === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>
+                      {cluster.severity}
+                    </span>
+                  </div>
+                  <div className="mt-4 text-3xl font-bold text-white">{cluster.distanceMeters} m</div>
+                  <div className="mt-2 text-sm text-slate-400">{cluster.description}</div>
+                  <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2">
+                    <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Hotspot score</span>
+                    <span className="text-lg font-semibold text-amber-200">{cluster.score}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section hidden={activeSection !== 'overview' && activeSection !== 'climate'} className="mb-6 rounded-2xl border border-sky-400/25 bg-gradient-to-r from-sky-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">

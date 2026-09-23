@@ -46,12 +46,37 @@ const demoResults: Record<string, AIResult> = {
   },
 }
 
+const normalizeHistory = (items: unknown): AnalysisRecord[] => {
+  if (!Array.isArray(items)) return []
+
+  return items.flatMap((item) => {
+    if (!item || typeof item !== 'object') return []
+
+    const candidate = item as Partial<AnalysisRecord>
+    const safeRecord: AnalysisRecord = {
+      id: typeof candidate.id === 'string' ? candidate.id : crypto.randomUUID(),
+      title: typeof candidate.title === 'string' ? candidate.title : 'Analysis',
+      type: (candidate.type as AnalysisRecord['type']) ?? 'single_image',
+      query: typeof candidate.query === 'string' ? candidate.query : 'Analyze this image',
+      status: (candidate.status as AnalysisRecord['status']) ?? 'completed',
+      created_at: typeof candidate.created_at === 'string' ? candidate.created_at : new Date().toISOString(),
+      confidence_score: typeof candidate.confidence_score === 'number' ? candidate.confidence_score : 0,
+      reliability_score: typeof candidate.reliability_score === 'number' ? candidate.reliability_score : 0,
+      summary: typeof candidate.summary === 'string' ? candidate.summary : 'Analysis complete.',
+      images: Array.isArray(candidate.images) ? candidate.images.filter(Boolean) as AnalysisRecord['images'] : [],
+      result: candidate.result,
+    }
+
+    return [safeRecord]
+  })
+}
+
 export const listAnalysisHistory = async (): Promise<AnalysisRecord[]> => {
   if (typeof window === 'undefined') return []
 
   try {
     const stored = window.localStorage.getItem(HISTORY_STORAGE_KEY)
-    return stored ? JSON.parse(stored) as AnalysisRecord[] : []
+    return stored ? normalizeHistory(JSON.parse(stored)) : []
   } catch {
     return []
   }
