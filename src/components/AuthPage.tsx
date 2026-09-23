@@ -70,10 +70,10 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-slate-100">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.12),transparent_35%)]" />
-      <section className="relative w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl shadow-blue-950/30 backdrop-blur">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(13,148,136,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.12),transparent_35%)]" />
+      <section className="relative w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl shadow-teal-950/30 backdrop-blur">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500/20 text-teal-300">
             <Sparkles size={24} />
           </div>
           <h1 className="text-2xl font-bold">SATQUERY AI</h1>
@@ -85,7 +85,7 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isRecovery && <label className="block text-sm text-slate-300">
             Email address
-            <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 focus-within:border-blue-400">
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 focus-within:border-teal-400">
               <Mail size={17} className="text-slate-500" />
               <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full bg-transparent text-slate-100 outline-none placeholder:text-slate-600" placeholder="you@example.com" />
             </div>
@@ -94,7 +94,7 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
           {(!isForgotPassword || isRecovery) && (
             <label className="block text-sm text-slate-300">
               Password
-              <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 focus-within:border-blue-400">
+              <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 focus-within:border-teal-400">
                 <LockKeyhole size={17} className="text-slate-500" />
                 <input required minLength={6} type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} className="w-full bg-transparent text-slate-100 outline-none placeholder:text-slate-600" placeholder="At least 6 characters" />
                 <button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword((current) => !current)} className="text-slate-400 hover:text-slate-200">
@@ -107,7 +107,7 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
           {error && <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">{error}</div>}
           {message && <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">{message}</div>}
 
-          <button disabled={isSubmitting} type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-3 font-semibold text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-70">
+          <button disabled={isSubmitting} type="submit" className="flex w-full items-center justify-center gap-2 rounded-xl bg-teal-500 px-4 py-3 font-semibold text-white transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-70">
             {isSubmitting && <LoaderCircle size={17} className="animate-spin" />}
             {isRecovery ? 'Update password' : isForgotPassword ? 'Send reset link' : isSignUp ? 'Create account' : 'Sign in'}
           </button>
@@ -118,14 +118,14 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
         ) : isForgotPassword ? (
           <div className="mt-6 text-center text-sm text-slate-400">
             Remembered your password?{' '}
-            <button type="button" onClick={() => switchMode('signin')} className="font-medium text-blue-300 hover:text-blue-200">Back to sign in</button>
+            <button type="button" onClick={() => switchMode('signin')} className="font-medium text-teal-300 hover:text-teal-200">Back to sign in</button>
           </div>
         ) : (
           <>
-            {!isSignUp && <div className="mt-4 text-center"><button type="button" onClick={() => switchMode('forgot')} className="text-sm font-medium text-blue-300 hover:text-blue-200">Forgot password?</button></div>}
+            {!isSignUp && <div className="mt-4 text-center"><button type="button" onClick={() => switchMode('forgot')} className="text-sm font-medium text-teal-300 hover:text-teal-200">Forgot password?</button></div>}
             <div className="mt-6 text-center text-sm text-slate-400">
               {isSignUp ? 'Already have an account?' : 'New to SatQuery?'}{' '}
-              <button type="button" onClick={() => switchMode(isSignUp ? 'signin' : 'signup')} className="font-medium text-blue-300 hover:text-blue-200">
+              <button type="button" onClick={() => switchMode(isSignUp ? 'signin' : 'signup')} className="font-medium text-teal-300 hover:text-teal-200">
                 {isSignUp ? 'Sign in' : 'Create an account'}
               </button>
             </div>

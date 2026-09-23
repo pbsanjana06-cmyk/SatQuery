@@ -687,19 +687,19 @@ function App() {
 
   if (!isDashboardOpen) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b1625] px-6 text-slate-100">
-        <div className="w-full max-w-3xl rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-slate-900 via-[#111c2d] to-cyan-950/40 p-8 shadow-2xl shadow-cyan-950/30 sm:p-12">
+      <div className="flex min-h-screen items-center justify-center bg-[#070d18] px-6 text-slate-100">
+        <div className="w-full max-w-3xl rounded-[28px] border border-violet-400/30 bg-[linear-gradient(135deg,rgba(15,23,42,0.96),rgba(17,24,39,0.96),rgba(49,46,129,0.48))] p-8 shadow-[0_25px_80px_rgba(31,41,55,0.7)] ring-1 ring-white/5 sm:p-12">
           <div className="mb-8 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/15 text-cyan-300"><Sparkles size={22} /></div>
-            <div><div className="text-lg font-bold tracking-wide">SATQUERY AI</div><div className="text-xs text-slate-400">Remote sensing intelligence workspace</div></div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20"><Sparkles size={22} /></div>
+            <div><div className="text-lg font-bold tracking-[0.08em] text-white">SATQUERY AI</div><div className="text-xs text-slate-400">Remote sensing intelligence workspace</div></div>
           </div>
           <div className="max-w-2xl">
-            <div className="mb-3 text-xs uppercase tracking-[0.25em] text-cyan-300">Satellite intelligence dashboard</div>
+            <div className="mb-3 text-xs uppercase tracking-[0.28em] text-violet-300">Satellite intelligence dashboard</div>
             <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">Explore the signals hidden in Earth imagery.</h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">Analyze uploaded satellite imagery, compare observations, inspect land cover, and explore potential nearby changes with clear evidence and provenance.</p>
-            <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 font-semibold text-slate-950 shadow-lg shadow-cyan-400/20 transition hover:bg-cyan-300"><Sparkles size={18} /> Explore SatQuery</button>
+            <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(99,102,241,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(99,102,241,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
           </div>
-          <div className="mt-12 grid gap-3 border-t border-slate-700/70 pt-6 text-xs text-slate-400 sm:grid-cols-3"><div><div className="mb-1 text-slate-200">Analyze</div>Ask questions about imagery and land cover.</div><div><div className="mb-1 text-slate-200">Compare</div>Inspect before and after observations.</div><div><div className="mb-1 text-slate-200">Discover</div>Review potential nearby changes.</div></div>
+          <div className="mt-12 grid gap-3 border-t border-slate-700/80 pt-6 text-xs text-slate-400 sm:grid-cols-3"><div><div className="mb-1 text-slate-200">Analyze</div>Ask questions about imagery and land cover.</div><div><div className="mb-1 text-slate-200">Compare</div>Inspect before and after observations.</div><div><div className="mb-1 text-slate-200">Discover</div>Review potential nearby changes.</div></div>
         </div>
       </div>
     )
@@ -1045,13 +1045,13 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b1625] text-slate-100">
+    <div className="premium-shell min-h-screen bg-[#0b1220] text-slate-100">
       {isSearchOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 p-4 backdrop-blur-sm">
-          <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-slate-700 bg-[#111c2d] p-4 shadow-2xl shadow-slate-950/80">
+          <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-slate-700/80 bg-[#111827]/95 p-4 shadow-[0_20px_80px_rgba(15,23,42,0.9)] ring-1 ring-violet-400/10">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">
-                <Search size={16} className="text-blue-300" /> Search SatQuery
+                <Search size={16} className="text-teal-300" /> Search SatQuery
               </div>
               <button type="button" onClick={closeSearch} className="rounded-lg border border-slate-700 px-2 py-1 text-xs text-slate-300">Esc</button>
             </div>
@@ -1064,7 +1064,7 @@ function App() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search pages, actions, and features..."
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 pl-9 pr-3 py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-700 bg-slate-950 pl-9 pr-3 py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-teal-500"
               />
             </div>
 
@@ -1080,13 +1080,13 @@ function App() {
                           closeSearch()
                           goToSection(item.value)
                         }}
-                        className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-3 text-left hover:border-blue-500"
+                        className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-3 text-left hover:border-teal-500"
                       >
                         <span>
                           <span className="block font-medium text-slate-100">{item.label}</span>
                           <span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">{item.group}</span>
                         </span>
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Open</span>
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-teal-300">Open</span>
                       </button>
                     ))}
                   </div>
@@ -1105,10 +1105,10 @@ function App() {
                         closeSearch()
                         goToSection(target)
                       }}
-                      className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-left text-sm text-slate-200 hover:border-blue-500"
+                      className="flex w-full items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-left text-sm text-slate-200 hover:border-teal-500"
                     >
                       <span>{quick}</span>
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-blue-300">Jump</span>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-teal-300">Jump</span>
                     </button>
                   ))}
                 </div>
@@ -1119,9 +1119,9 @@ function App() {
       )}
 
       <div className="flex min-h-screen">
-        <aside className="hidden w-72 shrink-0 border-r border-slate-800 bg-[#111c2d] p-4 lg:block">
-          <div className="mb-5 flex items-center gap-3 rounded-xl bg-slate-800/70 p-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-bold text-white">S</div>
+        <aside className="hidden w-72 shrink-0 border-r border-slate-800/80 bg-[#0f172a]/95 p-4 shadow-[inset_-1px_0_0_rgba(148,163,184,0.12)] lg:block">
+          <div className="mb-5 flex items-center gap-3 rounded-2xl border border-slate-700/80 bg-slate-900/80 p-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.45)]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 via-indigo-500 to-sky-500 text-sm font-bold text-white shadow-[0_12px_30px_rgba(99,102,241,0.45)]">S</div>
             <div>
               <div className="text-sm font-semibold text-slate-100">Personal workspace</div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">SatQuery AI</div>
@@ -1134,7 +1134,7 @@ function App() {
                 key={item.value}
                 type="button"
                 onClick={() => goToSection(item.value)}
-                className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-sm transition ${activeSection === item.value ? 'bg-blue-500/15 text-blue-200' : 'text-slate-300 hover:bg-slate-800/80 hover:text-slate-100'}`}
+                className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-sm transition ${activeSection === item.value ? 'bg-teal-500/15 text-teal-200' : 'text-slate-300 hover:bg-slate-800/80 hover:text-slate-100'}`}
               >
                 {item.label}
               </button>
@@ -1144,17 +1144,17 @@ function App() {
           <div className="mt-6 border-t border-slate-700 pt-4">
             <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-slate-500">Recent</div>
             <div className="space-y-2 text-sm text-slate-300">
-              <button type="button" onClick={() => goToSection('analysis')} className="block w-full rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-2 text-left hover:border-blue-500">SatQuery AI</button>
-              <button type="button" onClick={() => goToSection('results')} className="block w-full rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-2 text-left hover:border-blue-500">Latest result</button>
+              <button type="button" onClick={() => goToSection('analysis')} className="block w-full rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-2 text-left hover:border-teal-500">SatQuery AI</button>
+              <button type="button" onClick={() => goToSection('results')} className="block w-full rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-2 text-left hover:border-teal-500">Latest result</button>
             </div>
           </div>
         </aside>
 
         <div className="flex-1">
-          <header className="border-b border-white/10 bg-slate-900/70 backdrop-blur-xl">
+          <header className="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-xl shadow-[0_12px_30px_rgba(15,23,42,0.35)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-blue-500/20 p-2 text-blue-300">
+            <div className="rounded-xl bg-violet-500/15 p-2 text-violet-300 ring-1 ring-violet-400/20 shadow-[0_0_30px_rgba(139,92,246,0.18)]">
               <Sparkles size={20} />
             </div>
             <div>
@@ -1173,14 +1173,14 @@ function App() {
             <button type="button" onClick={() => goToSection('history')} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2">
               <History size={16} /> {currentLabels.history}
             </button>
-            <button type="button" onClick={() => requestCurrentLocation(true)} className="flex items-center gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 px-3 py-2 text-blue-200 hover:bg-blue-500/20">
+            <button type="button" onClick={() => requestCurrentLocation(true)} className="flex items-center gap-2 rounded-lg border border-teal-400/40 bg-teal-500/10 px-3 py-2 text-teal-200 hover:bg-teal-500/20">
               <LocateFixed size={16} /> Allow location
             </button>
             <button type="button" onClick={() => { if (isSupabaseConfigured) void supabase.auth.signOut(); else window.localStorage.removeItem('satquery.analysis-history') }} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2">
               <User size={16} /> Sign out
             </button>
             <label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200">
-              <Globe2 size={16} className="text-blue-300" />
+              <Globe2 size={16} className="text-teal-300" />
               <select value={language} onChange={(e) => setLanguage(e.target.value as LanguageCode)} className="bg-transparent text-sm outline-none">
                 <option value="en">EN</option>
                 <option value="es">ES</option>
@@ -1200,50 +1200,50 @@ function App() {
       <main className="mx-auto max-w-7xl px-4 py-6">
         <nav className="mb-5 flex gap-2 overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/80 p-2 text-sm lg:hidden">
           {[['overview', 'Overview'], ['dataset', 'Dataset'], ['nearby', 'Nearby'], ['proximity', 'Proximity'], ['climate', 'Climate'], ['analysis', 'Analysis'], ['map', 'Map'], ['results', 'Results'], ['provenance', 'Provenance'], ['history', 'History'], ['modes', 'Modes'], ['comparison', 'Sensors'], ['tools', 'Tools']].map(([section, label]) => (
-            <button key={section} type="button" onClick={() => goToSection(section)} className={`whitespace-nowrap rounded-lg px-3 py-2 ${activeSection === section ? 'bg-blue-500/15 text-blue-200' : 'text-slate-300 hover:bg-blue-500/10 hover:text-blue-200'}`}>{label}</button>
+            <button key={section} type="button" onClick={() => goToSection(section)} className={`whitespace-nowrap rounded-lg px-3 py-2 ${activeSection === section ? 'bg-teal-500/15 text-teal-200' : 'text-slate-300 hover:bg-teal-500/10 hover:text-teal-200'}`}>{label}</button>
           ))}
         </nav>
         <div hidden={activeSection !== 'overview'} id="overview" className="mb-6 grid scroll-mt-24 gap-4 md:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="rounded-2xl border border-blue-500/20 bg-slate-900/80 p-4 shadow-glow">
+            <div key={stat.label} className="rounded-2xl border border-teal-500/20 bg-slate-900/80 p-4 shadow-glow">
               <div className="text-slate-400 text-sm">{stat.label}</div>
               <div className="mt-3 text-3xl font-bold text-white">{stat.value}</div>
             </div>
           ))}
         </div>
 
-        <section hidden={activeSection !== 'overview' && activeSection !== 'nearby'} className="mb-6 rounded-2xl border border-cyan-400/25 bg-gradient-to-r from-cyan-500/10 via-slate-900/90 to-blue-500/10 p-5 shadow-glow">
+        <section hidden={activeSection !== 'overview' && activeSection !== 'nearby'} className="mb-6 rounded-2xl border border-teal-400/25 bg-gradient-to-r from-teal-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-cyan-200"><MapPinned size={15} /> AI Nearby Issue Detection</div>
+              <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-teal-200"><MapPinned size={15} /> AI Nearby Issue Detection</div>
               <h2 className="text-xl font-bold text-white">Analyze your selected area using satellite imagery and AI.</h2>
               <p className="mt-2 max-w-2xl text-sm text-slate-400">SatQuery checks for potential environmental, infrastructure, urban, agriculture, and disaster-related changes. Results are situational awareness, not confirmed hazards.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={openNearbyAnalysis} className="flex items-center gap-2 rounded-xl bg-cyan-400 px-4 py-3 font-semibold text-slate-950 shadow-lg shadow-cyan-400/20 hover:bg-cyan-300"><LocateFixed size={18} /> Analyze My Area</button>
-              <button type="button" onClick={() => goToSection('proximity')} className="rounded-xl border border-cyan-400/40 px-4 py-3 text-sm font-medium text-cyan-200 hover:bg-cyan-400/10">Open Proximity Analysis</button>
+              <button type="button" onClick={openNearbyAnalysis} className="flex items-center gap-2 rounded-xl bg-teal-400 px-4 py-3 font-semibold text-slate-950 shadow-lg shadow-teal-400/20 hover:bg-teal-300"><LocateFixed size={18} /> Analyze My Area</button>
+              <button type="button" onClick={() => goToSection('proximity')} className="rounded-xl border border-teal-400/40 px-4 py-3 text-sm font-medium text-teal-200 hover:bg-teal-400/10">Open Proximity Analysis</button>
             </div>
           </div>
         </section>
 
-        <section hidden={activeSection !== 'proximity'} id="proximity" className="mb-6 scroll-mt-24 rounded-2xl border border-blue-400/20 bg-blue-400/5 p-5">
+        <section hidden={activeSection !== 'proximity'} id="proximity" className="mb-6 scroll-mt-24 rounded-2xl border border-teal-400/20 bg-teal-400/5 p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-blue-200"><MapPinned size={15} /> Proximity Analysis</div>
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-teal-200"><MapPinned size={15} /> Proximity Analysis</div>
               <h2 className="mt-2 text-xl font-bold text-white">Proximity &amp; Nearby Feature Analysis</h2>
             </div>
-            <button type="button" onClick={() => void runNearbyAnalysis()} className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-400">Refresh features</button>
+            <button type="button" onClick={() => void runNearbyAnalysis()} className="rounded-xl bg-teal-500 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-400">Refresh features</button>
           </div>
 
           <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="text-sm font-semibold text-blue-100">Nearby feature search</div>
+              <div className="text-sm font-semibold text-teal-100">Nearby feature search</div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">Current location</div>
             </div>
             <input value={proximityQuery} onChange={(event) => setProximityQuery(event.target.value)} placeholder="What important features or issues are near this location?" className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" />
             <div className="mt-3 flex flex-wrap gap-2">
               {['What important features or issues are near this location?', 'Find all major roads within 2 km of this location.', 'Show nearby hospitals and water features.', 'List hazards and built-up areas near me.'].map((question) => (
-                <button key={question} type="button" onClick={() => setProximityQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-blue-400">{question}</button>
+                <button key={question} type="button" onClick={() => setProximityQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-teal-400">{question}</button>
               ))}
             </div>
             <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -1253,7 +1253,7 @@ function App() {
                     <div className="text-sm font-medium text-slate-100">{feature.label}</div>
                     <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${feature.priority === 'HIGH' ? 'bg-red-500/20 text-red-200' : feature.priority === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{feature.priority}</span>
                   </div>
-                  <div className="mt-2 text-xl font-semibold text-blue-200">{feature.distanceMeters} m</div>
+                  <div className="mt-2 text-xl font-semibold text-teal-200">{feature.distanceMeters} m</div>
                   <div className="mt-1 text-[11px] leading-5 text-slate-400">{feature.detail}</div>
                 </div>
               )) : <div className="col-span-full rounded-xl border border-dashed border-slate-700 p-4 text-xs text-slate-400">No proximity features were calculated for this location yet. Click the refresh button or allow location access to generate nearby detail.</div>}
