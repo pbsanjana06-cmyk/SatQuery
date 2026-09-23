@@ -673,30 +673,6 @@ function App() {
     ? currentLocation
     : null
 
-  const hotspotClusters = useMemo(() => {
-    if (!nearbyAnalysis?.issues.length) return []
-
-    return nearbyAnalysis.issues
-      .map((issue) => {
-        const severityWeight = issue.severity === 'HIGH' ? 35 : issue.severity === 'MEDIUM' ? 22 : 12
-        const confidence = issue.confidence ?? 0
-        const distancePenalty = Math.min(Math.round(issue.distance_meters / 100), 18)
-        const score = Math.min(99, Math.round(severityWeight + confidence + 12 - distancePenalty))
-
-        return {
-          id: issue.id,
-          label: issue.issue_type,
-          distanceMeters: Math.round(issue.distance_meters),
-          score,
-          severity: issue.severity,
-          description: issue.description,
-          category: issue.category,
-        }
-      })
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4)
-  }, [nearbyAnalysis])
-
   if (isAuthLoading) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-300">Checking your SatQuery session...</div>
   }
@@ -1014,7 +990,6 @@ function App() {
     { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'bigearthnet', 'data', 'benchmark', 'sentinel', 'land cover'] },
     { label: 'AI Nearby Issues', value: 'nearby', keywords: ['nearby', 'area', 'issues', 'satellite', 'location', 'anomaly'] },
     { label: 'Proximity Analysis', value: 'proximity', keywords: ['proximity', 'nearby features', 'hospitals', 'roads', 'rivers', 'hazards', 'location'] },
-    { label: 'Hotspot Analysis', value: 'hotspots', keywords: ['hotspots', 'risk', 'cluster', 'priority', 'hazard', 'warning'] },
     { label: 'Climate & Early Warning', value: 'climate', keywords: ['climate', 'weather', 'forecast', 'warning', 'risk', 'rain'] },
     { label: 'Analysis', value: 'analysis', keywords: ['analysis', 'upload', 'question', 'ai', 'image', 'query'] },
     { label: 'Satellite map', value: 'map', keywords: ['map', 'location', 'geolocation', 'coordinates', 'viewport', 'geospatial'] },
@@ -1032,7 +1007,6 @@ function App() {
     { label: 'Analyze climate', value: 'climate', group: 'Action', keywords: ['climate', 'weather', 'forecast', 'warning'] },
     { label: 'Analyze my area', value: 'nearby', group: 'Action', keywords: ['area', 'nearby', 'location', 'issues', 'surrounding'] },
     { label: 'Open proximity analysis', value: 'proximity', group: 'Action', keywords: ['proximity', 'nearby features', 'roads', 'hospitals', 'water', 'hazards'] },
-    { label: 'Open hotspot analysis', value: 'hotspots', group: 'Action', keywords: ['hotspot', 'risk cluster', 'priority', 'warning', 'danger'] },
     { label: 'Generate PDF report', value: 'results', group: 'Action', keywords: ['pdf', 'report', 'download', 'export'] },
     { label: 'View history', value: 'history', group: 'Action', keywords: ['history', 'past', 'saved', 'records'] },
   ]
@@ -1121,13 +1095,13 @@ function App() {
                 )
               ) : (
                 <div className="space-y-2">
-                  {['Analysis', 'Climate', 'Nearby', 'Proximity', 'Hotspots', 'Map', 'History'].map((quick) => (
+                  {['Analysis', 'Climate', 'Nearby', 'Proximity', 'Map', 'History'].map((quick) => (
                     <button
                       key={quick}
                       type="button"
                       onClick={() => {
                         const mapped = quick.toLowerCase()
-                        const target = mapped === 'analysis' ? 'analysis' : mapped === 'climate' ? 'climate' : mapped === 'nearby' ? 'nearby' : mapped === 'proximity' ? 'proximity' : mapped === 'hotspots' ? 'hotspots' : mapped === 'map' ? 'map' : 'history'
+                        const target = mapped === 'analysis' ? 'analysis' : mapped === 'climate' ? 'climate' : mapped === 'nearby' ? 'nearby' : mapped === 'proximity' ? 'proximity' : mapped === 'map' ? 'map' : 'history'
                         closeSearch()
                         goToSection(target)
                       }}
@@ -1225,7 +1199,7 @@ function App() {
 
       <main className="mx-auto max-w-7xl px-4 py-6">
         <nav className="mb-5 flex gap-2 overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/80 p-2 text-sm lg:hidden">
-          {[['overview', 'Overview'], ['dataset', 'Dataset'], ['nearby', 'Nearby'], ['proximity', 'Proximity'], ['hotspots', 'Hotspots'], ['climate', 'Climate'], ['analysis', 'Analysis'], ['map', 'Map'], ['results', 'Results'], ['provenance', 'Provenance'], ['history', 'History'], ['modes', 'Modes'], ['comparison', 'Sensors'], ['tools', 'Tools']].map(([section, label]) => (
+          {[['overview', 'Overview'], ['dataset', 'Dataset'], ['nearby', 'Nearby'], ['proximity', 'Proximity'], ['climate', 'Climate'], ['analysis', 'Analysis'], ['map', 'Map'], ['results', 'Results'], ['provenance', 'Provenance'], ['history', 'History'], ['modes', 'Modes'], ['comparison', 'Sensors'], ['tools', 'Tools']].map(([section, label]) => (
             <button key={section} type="button" onClick={() => goToSection(section)} className={`whitespace-nowrap rounded-lg px-3 py-2 ${activeSection === section ? 'bg-blue-500/15 text-blue-200' : 'text-slate-300 hover:bg-blue-500/10 hover:text-blue-200'}`}>{label}</button>
           ))}
         </nav>
@@ -1288,43 +1262,6 @@ function App() {
           </div>
         </section>
 
-        <section hidden={activeSection !== 'hotspots'} id="hotspots" className="mb-6 scroll-mt-24 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-amber-200"><ShieldCheck size={15} /> Hotspot Analysis</div>
-              <h2 className="mt-2 text-xl font-bold text-white">Risk clusters near the selected location</h2>
-            </div>
-            <button type="button" onClick={() => { if (currentLocation) void runNearbyAnalysis(currentLocation) }} className="rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300">Refresh hotspots</button>
-          </div>
-
-          {!hotspotClusters.length ? (
-            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-950/50 p-5 text-sm text-slate-400">
-              No hotspot clusters are available yet. Run a nearby analysis to rank the risk areas around your selected location.
-            </div>
-          ) : (
-            <div className="grid gap-4 lg:grid-cols-2">
-              {hotspotClusters.map((cluster) => (
-                <div key={cluster.id} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold text-slate-100">{cluster.label}</div>
-                      <div className="mt-2 text-[10px] uppercase tracking-[0.2em] text-slate-500">{cluster.category}</div>
-                    </div>
-                    <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${cluster.severity === 'HIGH' ? 'bg-red-500/20 text-red-200' : cluster.severity === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>
-                      {cluster.severity}
-                    </span>
-                  </div>
-                  <div className="mt-4 text-3xl font-bold text-white">{cluster.distanceMeters} m</div>
-                  <div className="mt-2 text-sm text-slate-400">{cluster.description}</div>
-                  <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-2">
-                    <span className="text-xs uppercase tracking-[0.2em] text-slate-500">Hotspot score</span>
-                    <span className="text-lg font-semibold text-amber-200">{cluster.score}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
 
         <section hidden={activeSection !== 'overview' && activeSection !== 'climate'} className="mb-6 rounded-2xl border border-sky-400/25 bg-gradient-to-r from-sky-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">
           <div className="flex flex-wrap items-center justify-between gap-4">
