@@ -1212,7 +1212,7 @@ function App() {
           ))}
         </div>
 
-        <section hidden={activeSection !== 'overview' && activeSection !== 'nearby'} className="mb-6 rounded-2xl border border-teal-400/25 bg-gradient-to-r from-teal-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">
+        <section hidden={activeSection !== 'overview' && activeSection !== 'nearby'} className="mb-6 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-white to-yellow-50 p-5 shadow-glow">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-teal-200"><MapPinned size={15} /> AI Nearby Issue Detection</div>
@@ -1263,7 +1263,7 @@ function App() {
         </section>
 
 
-        <section hidden={activeSection !== 'overview' && activeSection !== 'climate'} className="mb-6 rounded-2xl border border-teal-400/25 bg-gradient-to-r from-teal-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">
+        <section hidden={activeSection !== 'overview' && activeSection !== 'climate'} className="mb-6 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-white to-yellow-50 p-5 shadow-glow">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-teal-200">🌦️ Climate &amp; Early Warning</div>
