@@ -17,7 +17,6 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-  const [confirmationEmail, setConfirmationEmail] = useState('')
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -53,26 +52,12 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
     }
 
     if (isSignUp && 'session' in response.data && !response.data.session) {
-      setConfirmationEmail(email)
-      setMessage('Account created. Check your email to confirm your account, then sign in.')
+      setMessage('Account created successfully. Please sign in with your email and password.')
       setIsSignUp(false)
       return
     }
 
     onAuthenticated()
-  }
-
-  const resendConfirmation = async () => {
-    setIsSubmitting(true)
-    setError('')
-    setMessage('')
-    const { error: resendError } = await supabase.auth.resend({ type: 'signup', email: confirmationEmail })
-    setIsSubmitting(false)
-    if (resendError) {
-      setError(resendError.message)
-      return
-    }
-    setMessage('A new confirmation email has been sent.')
   }
 
   const switchMode = (mode: 'signin' | 'signup' | 'forgot') => {
@@ -145,12 +130,6 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
               </button>
             </div>
           </>
-        )}
-
-        {confirmationEmail && !isSignUp && !isForgotPassword && (
-          <button disabled={isSubmitting} type="button" onClick={resendConfirmation} className="mt-4 w-full text-sm text-slate-400 hover:text-slate-200 disabled:opacity-60">
-            Didn&apos;t receive the confirmation email? Resend it
-          </button>
         )}
       </section>
     </main>

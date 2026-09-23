@@ -678,7 +678,7 @@ function App() {
   }
 
   if (authError) {
-    return <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-center text-sm text-red-200">Unable to complete email confirmation: {authError}</div>
+    return <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-center text-sm text-red-200">Unable to load the authentication service: {authError}</div>
   }
 
   if ((isSupabaseConfigured && !session) || isRecovery) {
