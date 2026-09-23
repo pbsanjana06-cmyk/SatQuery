@@ -687,15 +687,15 @@ function App() {
 
   if (!isDashboardOpen) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#070d18] px-6 text-slate-100">
-        <div className="w-full max-w-3xl rounded-[28px] border border-violet-400/30 bg-[linear-gradient(135deg,rgba(15,23,42,0.96),rgba(17,24,39,0.96),rgba(49,46,129,0.48))] p-8 shadow-[0_25px_80px_rgba(31,41,55,0.7)] ring-1 ring-white/5 sm:p-12">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 text-slate-800">
+        <div className="w-full max-w-3xl rounded-[28px] border border-slate-200 bg-white p-8 shadow-[0_25px_80px_rgba(15,23,42,0.12)] ring-1 ring-teal-100 sm:p-12">
           <div className="mb-8 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20"><Sparkles size={22} /></div>
-            <div><div className="text-lg font-bold tracking-[0.08em] text-white">SATQUERY AI</div><div className="text-xs text-slate-400">Remote sensing intelligence workspace</div></div>
+            <div><div className="text-lg font-bold tracking-[0.08em] text-slate-900">SATQUERY AI</div><div className="text-xs text-slate-500">Remote sensing intelligence workspace</div></div>
           </div>
           <div className="max-w-2xl">
             <div className="mb-3 text-xs uppercase tracking-[0.28em] text-violet-300">Satellite intelligence dashboard</div>
-            <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">Explore the signals hidden in Earth imagery.</h1>
+            <h1 className="text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">Explore the signals hidden in Earth imagery.</h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">Analyze uploaded satellite imagery, compare observations, inspect land cover, and explore potential nearby changes with clear evidence and provenance.</p>
             <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-teal-500 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(20,184,166,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(20,184,166,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
           </div>
@@ -1045,10 +1045,10 @@ function App() {
   }
 
   return (
-    <div className="premium-shell min-h-screen bg-[#0b1220] text-slate-100">
+    <div className="premium-shell min-h-screen bg-slate-50 text-slate-800">
       {isSearchOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 p-4 backdrop-blur-sm">
-          <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-slate-700/80 bg-[#111827]/95 p-4 shadow-[0_20px_80px_rgba(15,23,42,0.9)] ring-1 ring-violet-400/10">
+          <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_20px_80px_rgba(15,23,42,0.18)] ring-1 ring-teal-100">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">
                 <Search size={16} className="text-teal-300" /> Search SatQuery
@@ -1119,7 +1119,7 @@ function App() {
       )}
 
       <div className="flex min-h-screen">
-        <aside className="hidden w-72 shrink-0 border-r border-slate-800/80 bg-[#0f172a]/95 p-4 shadow-[inset_-1px_0_0_rgba(148,163,184,0.12)] lg:block">
+        <aside className="hidden w-72 shrink-0 border-r border-slate-200 bg-white/95 p-4 shadow-[inset_-1px_0_0_rgba(148,163,184,0.18)] lg:block">
           <div className="mb-5 flex items-center gap-3 rounded-2xl border border-slate-700/80 bg-slate-900/80 p-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.45)]">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 via-teal-500 to-emerald-500 text-sm font-bold text-white shadow-[0_12px_30px_rgba(20,184,166,0.45)]">S</div>
             <div>

@@ -69,15 +69,15 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-slate-100">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(13,148,136,0.18),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.12),transparent_35%)]" />
-      <section className="relative w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl shadow-teal-950/30 backdrop-blur">
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 text-slate-800">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(13,148,136,0.12),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.1),transparent_35%)]" />
+      <section className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white/95 p-8 shadow-2xl shadow-slate-200/80 backdrop-blur">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500/20 text-teal-300">
             <Sparkles size={24} />
           </div>
-          <h1 className="text-2xl font-bold">SATQUERY AI</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-slate-900">SATQUERY AI</h1>
+          <p className="mt-2 text-sm text-slate-500">
             {isRecovery ? 'Choose a new password' : isForgotPassword ? 'Reset your SatQuery password' : 'Sign in to analyze remote sensing imagery'}
           </p>
         </div>
@@ -85,7 +85,7 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isRecovery && <label className="block text-sm text-slate-300">
             Email address
-            <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 focus-within:border-teal-400">
+            <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 focus-within:border-teal-400">
               <Mail size={17} className="text-slate-500" />
               <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full bg-transparent text-slate-100 outline-none placeholder:text-slate-600" placeholder="you@example.com" />
             </div>
@@ -94,7 +94,7 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
           {(!isForgotPassword || isRecovery) && (
             <label className="block text-sm text-slate-300">
               Password
-              <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 focus-within:border-teal-400">
+              <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 focus-within:border-teal-400">
                 <LockKeyhole size={17} className="text-slate-500" />
                 <input required minLength={6} type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} className="w-full bg-transparent text-slate-100 outline-none placeholder:text-slate-600" placeholder="At least 6 characters" />
                 <button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword((current) => !current)} className="text-slate-400 hover:text-slate-200">
