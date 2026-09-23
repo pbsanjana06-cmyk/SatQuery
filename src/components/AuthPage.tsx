@@ -83,21 +83,21 @@ export function AuthPage({ onAuthenticated, isRecovery = false }: AuthPageProps)
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!isRecovery && <label className="block text-sm text-slate-300">
+          {!isRecovery && <label className="block text-sm text-slate-700">
             Email address
             <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 focus-within:border-amber-400">
               <Mail size={17} className="text-slate-500" />
-              <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full bg-transparent text-slate-100 outline-none placeholder:text-slate-600" placeholder="you@example.com" />
+              <input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full bg-transparent text-slate-900 outline-none placeholder:text-slate-400" placeholder="you@example.com" />
             </div>
           </label>}
 
           {(!isForgotPassword || isRecovery) && (
-            <label className="block text-sm text-slate-300">
+            <label className="block text-sm text-slate-700">
               Password
               <div className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 focus-within:border-amber-400">
                 <LockKeyhole size={17} className="text-slate-500" />
-                <input required minLength={6} type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} className="w-full bg-transparent text-slate-100 outline-none placeholder:text-slate-600" placeholder="At least 6 characters" />
-                <button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword((current) => !current)} className="text-slate-400 hover:text-slate-200">
+                <input required minLength={6} type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} className="w-full bg-transparent text-slate-900 outline-none placeholder:text-slate-400" placeholder="At least 6 characters" />
+                <button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword((current) => !current)} className="text-slate-500 hover:text-slate-800">
                   {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
