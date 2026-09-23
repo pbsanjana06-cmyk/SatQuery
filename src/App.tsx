@@ -1443,7 +1443,7 @@ function App() {
         </section>
 
         <section hidden={activeSection !== 'dataset'} id="dataset" className="mb-6 scroll-mt-24 overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-900/80 shadow-glow">
-          <div className="border-b border-slate-800 bg-gradient-to-r from-emerald-500/10 via-slate-900 to-teal-500/10 p-5">
+          <div className="border-b border-amber-200 bg-gradient-to-r from-amber-50 via-white to-yellow-50 p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="mb-2 text-xs uppercase tracking-[0.22em] text-emerald-300">Dataset intelligence dashboard</div>
