@@ -706,7 +706,7 @@ function App() {
   }
 
   const datasetEvidence = {
-    dataset: 'BigEarthNet.txt',
+    dataset: 'Copernicus Data Space',
     sensors: 'Sentinel-1 SAR + Sentinel-2 multispectral',
     task: mode === 'before_after' || mode === 'change_detection' ? 'Change understanding' : 'Land-cover question answering',
     matchedLabels: ['Agriculture', 'Arable land', 'Road network'],
@@ -987,7 +987,7 @@ function App() {
 
   const sidebarItems = [
     { label: 'Overview', value: 'overview', keywords: ['dashboard', 'summary', 'home', 'welcome', 'stats'] },
-    { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'bigearthnet', 'data', 'benchmark', 'sentinel', 'land cover'] },
+    { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'copernicus', 'data space', 'sentinel', 'land cover'] },
     { label: 'AI Nearby Issues', value: 'nearby', keywords: ['nearby', 'area', 'issues', 'satellite', 'location', 'anomaly'] },
     { label: 'Proximity Analysis', value: 'proximity', keywords: ['proximity', 'nearby features', 'hospitals', 'roads', 'rivers', 'hazards', 'location'] },
     { label: 'Climate & Early Warning', value: 'climate', keywords: ['climate', 'weather', 'forecast', 'warning', 'risk', 'rain'] },
@@ -1447,7 +1447,7 @@ function App() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="mb-2 text-xs uppercase tracking-[0.22em] text-emerald-300">Dataset intelligence dashboard</div>
-                <h1 className="text-2xl font-bold text-white">BigEarthNet.txt Explorer</h1>
+                <h1 className="text-2xl font-bold text-white">Copernicus Dataset Explorer</h1>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Explore Sentinel-1 SAR and Sentinel-2 multispectral imagery through land-cover questions, visual evidence, and benchmark-ready remote-sensing analysis.</p>
               </div>
               <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200">Dataset-ready mode</span>
@@ -1458,7 +1458,7 @@ function App() {
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Image pairs</div><div className="mt-2 text-2xl font-bold text-white">464K+</div><div className="mt-1 text-xs text-slate-400">Co-registered samples</div></div>
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Text annotations</div><div className="mt-2 text-2xl font-bold text-white">9.6M</div><div className="mt-1 text-xs text-slate-400">Captions, VQA, regions</div></div>
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Sensor pair</div><div className="mt-2 text-lg font-bold text-white">S1 + S2</div><div className="mt-1 text-xs text-slate-400">SAR + multispectral</div></div>
-            <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Benchmark</div><div className="mt-2 text-lg font-bold text-emerald-300">VRSBench</div><div className="mt-1 text-xs text-slate-400">Visual reasoning evaluation</div></div>
+            <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Catalogue</div><div className="mt-2 text-lg font-bold text-emerald-300">Copernicus</div><div className="mt-1 text-xs text-slate-400">Earth observation data space</div></div>
           </div>
 
           <div className="grid gap-4 p-5 lg:grid-cols-[1.1fr_1fr_1fr]">
@@ -1505,12 +1505,12 @@ function App() {
 
             <div className="mb-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
               <div className="mb-2 flex items-center justify-between gap-2">
-                <div className="text-sm font-medium text-emerald-100">BigEarthNet evidence</div>
+                <div className="text-sm font-medium text-emerald-100">Copernicus evidence</div>
                 <button type="button" onClick={() => setDatasetEvidenceEnabled((current) => !current)} className={`rounded-full px-2 py-1 text-xs ${datasetEvidenceEnabled ? 'bg-emerald-500/20 text-emerald-200' : 'bg-slate-800 text-slate-400'}`}>
                   {datasetEvidenceEnabled ? 'ON' : 'OFF'}
                 </button>
               </div>
-              <div className="text-xs leading-5 text-slate-400">Dataset-ready grounding for Sentinel-1 SAR and Sentinel-2 multispectral analysis.</div>
+                <div className="text-xs leading-5 text-slate-400">Catalogue-ready grounding for Sentinel-1 SAR and Sentinel-2 multispectral analysis.</div>
             </div>
             </div>
 
@@ -1741,8 +1741,8 @@ function App() {
                     {item}
                   </button>
                 ))}
-                <button className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200 hover:border-emerald-400" type="button" onClick={() => setQuery('Which BigEarthNet land-cover classes are visible in the Sentinel-1 and Sentinel-2 imagery?')}>
-                  Ask with BigEarthNet
+                <button className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200 hover:border-emerald-400" type="button" onClick={() => setQuery('Which Copernicus land-cover classes are visible in the Sentinel-1 and Sentinel-2 imagery?')}>
+                  Ask with Copernicus
                 </button>
               </div>
 
@@ -1832,7 +1832,7 @@ function App() {
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold text-emerald-100">Dataset Evidence</div>
-                  <div className="mt-1 text-xs text-slate-400">BigEarthNet.txt benchmark-ready interpretation layer</div>
+                  <div className="mt-1 text-xs text-slate-400">Copernicus Data Space interpretation layer</div>
                 </div>
                 <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs text-emerald-200">{datasetEvidence.evidenceScore}% match</span>
               </div>
