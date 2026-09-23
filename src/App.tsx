@@ -688,16 +688,16 @@ function App() {
   if (!isDashboardOpen) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 text-slate-800">
-        <div className="w-full max-w-3xl rounded-[28px] border border-slate-200 bg-white p-8 shadow-[0_25px_80px_rgba(15,23,42,0.12)] ring-1 ring-teal-100 sm:p-12">
+        <div className="w-full max-w-3xl rounded-[28px] border border-amber-200 bg-white p-8 shadow-[0_25px_80px_rgba(15,23,42,0.12)] ring-1 ring-amber-100 sm:p-12">
           <div className="mb-8 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/20"><Sparkles size={22} /></div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 ring-1 ring-amber-300"><Sparkles size={22} /></div>
             <div><div className="text-lg font-bold tracking-[0.08em] text-slate-900">SATQUERY AI</div><div className="text-xs text-slate-500">Remote sensing intelligence workspace</div></div>
           </div>
           <div className="max-w-2xl">
-            <div className="mb-3 text-xs uppercase tracking-[0.28em] text-violet-300">Satellite intelligence dashboard</div>
+            <div className="mb-3 text-xs uppercase tracking-[0.28em] text-amber-700">Satellite intelligence dashboard</div>
             <h1 className="text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">Explore the signals hidden in Earth imagery.</h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">Analyze uploaded satellite imagery, compare observations, inspect land cover, and explore potential nearby changes with clear evidence and provenance.</p>
-            <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-teal-500 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(20,184,166,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(20,184,166,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
+            <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(212,160,23,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(212,160,23,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
           </div>
           <div className="mt-12 grid gap-3 border-t border-slate-700/80 pt-6 text-xs text-slate-400 sm:grid-cols-3"><div><div className="mb-1 text-slate-200">Analyze</div>Ask questions about imagery and land cover.</div><div><div className="mb-1 text-slate-200">Compare</div>Inspect before and after observations.</div><div><div className="mb-1 text-slate-200">Discover</div>Review potential nearby changes.</div></div>
         </div>
