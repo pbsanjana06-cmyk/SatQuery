@@ -620,7 +620,7 @@ function App() {
   const nearbyIssueCategories = useMemo(() => {
     const categories = [
       { key: 'environmental', label: 'Environmental', accent: 'emerald', description: 'Water, vegetation or land-cover change' },
-      { key: 'infrastructure', label: 'Infrastructure', accent: 'cyan', description: 'Roads, utilities, or built assets' },
+      { key: 'infrastructure', label: 'Infrastructure', accent: 'teal', description: 'Roads, utilities, or built assets' },
       { key: 'urban', label: 'Urban', accent: 'amber', description: 'Built-up growth or mixed-use change' },
       { key: 'agriculture', label: 'Agriculture', accent: 'lime', description: 'Crop pattern or field stress' },
       { key: 'disaster', label: 'Disaster', accent: 'rose', description: 'Flooding or storm-related risk' },
@@ -697,7 +697,7 @@ function App() {
             <div className="mb-3 text-xs uppercase tracking-[0.28em] text-violet-300">Satellite intelligence dashboard</div>
             <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">Explore the signals hidden in Earth imagery.</h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">Analyze uploaded satellite imagery, compare observations, inspect land cover, and explore potential nearby changes with clear evidence and provenance.</p>
-            <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(99,102,241,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(99,102,241,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
+            <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-teal-500 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(20,184,166,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(20,184,166,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
           </div>
           <div className="mt-12 grid gap-3 border-t border-slate-700/80 pt-6 text-xs text-slate-400 sm:grid-cols-3"><div><div className="mb-1 text-slate-200">Analyze</div>Ask questions about imagery and land cover.</div><div><div className="mb-1 text-slate-200">Compare</div>Inspect before and after observations.</div><div><div className="mb-1 text-slate-200">Discover</div>Review potential nearby changes.</div></div>
         </div>
@@ -1121,7 +1121,7 @@ function App() {
       <div className="flex min-h-screen">
         <aside className="hidden w-72 shrink-0 border-r border-slate-800/80 bg-[#0f172a]/95 p-4 shadow-[inset_-1px_0_0_rgba(148,163,184,0.12)] lg:block">
           <div className="mb-5 flex items-center gap-3 rounded-2xl border border-slate-700/80 bg-slate-900/80 p-2.5 shadow-[0_10px_30px_rgba(15,23,42,0.45)]">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 via-indigo-500 to-sky-500 text-sm font-bold text-white shadow-[0_12px_30px_rgba(99,102,241,0.45)]">S</div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 via-teal-500 to-emerald-500 text-sm font-bold text-white shadow-[0_12px_30px_rgba(20,184,166,0.45)]">S</div>
             <div>
               <div className="text-sm font-semibold text-slate-100">Personal workspace</div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">SatQuery AI</div>
@@ -1263,25 +1263,25 @@ function App() {
         </section>
 
 
-        <section hidden={activeSection !== 'overview' && activeSection !== 'climate'} className="mb-6 rounded-2xl border border-sky-400/25 bg-gradient-to-r from-sky-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">
+        <section hidden={activeSection !== 'overview' && activeSection !== 'climate'} className="mb-6 rounded-2xl border border-teal-400/25 bg-gradient-to-r from-teal-500/10 via-slate-900/90 to-emerald-500/10 p-5 shadow-glow">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-sky-200">🌦️ Climate &amp; Early Warning</div>
+              <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-teal-200">🌦️ Climate &amp; Early Warning</div>
               <h2 className="text-xl font-bold text-white">Understand conditions, trends, forecasts, and potential risks for your selected area.</h2>
               <p className="mt-2 max-w-2xl text-sm text-slate-400">Weather values come from the configured provider. Unsupported indices and warnings remain unavailable.</p>
             </div>
-            <div className="flex flex-wrap gap-2"><button type="button" onClick={() => { setClimateView('overview'); void runClimateAnalysis() }} className="rounded-xl bg-sky-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-sky-300">Analyze Climate</button><button type="button" onClick={() => openClimateView('forecast')} className="rounded-xl border border-sky-400/40 px-3 py-2 text-xs text-sky-200">View Forecast</button><button type="button" onClick={() => openClimateView('warning')} className="rounded-xl border border-slate-700 px-3 py-2 text-xs text-slate-300">Early Warning</button><button type="button" onClick={() => openClimateView('history')} className="rounded-xl border border-slate-700 px-3 py-2 text-xs text-slate-300">Historical Trends</button></div>
+            <div className="flex flex-wrap gap-2"><button type="button" onClick={() => { setClimateView('overview'); void runClimateAnalysis() }} className="rounded-xl bg-teal-400 px-4 py-3 text-sm font-semibold text-slate-950 hover:bg-teal-300">Analyze Climate</button><button type="button" onClick={() => openClimateView('forecast')} className="rounded-xl border border-teal-400/40 px-3 py-2 text-xs text-teal-200">View Forecast</button><button type="button" onClick={() => openClimateView('warning')} className="rounded-xl border border-slate-700 px-3 py-2 text-xs text-slate-300">Early Warning</button><button type="button" onClick={() => openClimateView('history')} className="rounded-xl border border-slate-700 px-3 py-2 text-xs text-slate-300">Historical Trends</button></div>
           </div>
         </section>
 
         <section hidden={activeSection !== 'climate'} id="climate" className="mb-6 scroll-mt-24 space-y-5">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-            <div className="flex flex-wrap items-start justify-between gap-4"><div><div className="text-lg font-semibold text-white">🌦️ Climate &amp; Early Warning Intelligence</div><p className="mt-1 text-xs text-slate-400">Specific AOI: {safeLocation ? `${safeLocation.lat.toFixed(5)}, ${safeLocation.lng.toFixed(5)}` : 'No location selected'} · View: {climateView}</p></div><div className="flex items-center gap-2"><select value={climateAoiMode} onChange={(event) => setClimateAoiMode(event.target.value as 'uploaded' | 'manual')} className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-xs text-slate-300"><option value="manual">Manual AOI</option><option value="uploaded">Uploaded image AOI</option></select><button type="button" onClick={() => { setClimateView('overview'); void runClimateAnalysis() }} className="rounded-lg bg-sky-400 px-3 py-2 text-xs font-semibold text-slate-950">Analyze Climate</button></div></div>
-            {climateLoading && <div className="mt-4 rounded-xl border border-sky-400/20 bg-sky-400/10 p-3 text-sm text-sky-100">{climateMessage}</div>}
+            <div className="flex flex-wrap items-start justify-between gap-4"><div><div className="text-lg font-semibold text-white">🌦️ Climate &amp; Early Warning Intelligence</div><p className="mt-1 text-xs text-slate-400">Specific AOI: {safeLocation ? `${safeLocation.lat.toFixed(5)}, ${safeLocation.lng.toFixed(5)}` : 'No location selected'} · View: {climateView}</p></div><div className="flex items-center gap-2"><select value={climateAoiMode} onChange={(event) => setClimateAoiMode(event.target.value as 'uploaded' | 'manual')} className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-2 text-xs text-slate-300"><option value="manual">Manual AOI</option><option value="uploaded">Uploaded image AOI</option></select><button type="button" onClick={() => { setClimateView('overview'); void runClimateAnalysis() }} className="rounded-lg bg-teal-400 px-3 py-2 text-xs font-semibold text-slate-950">Analyze Climate</button></div></div>
+            {climateLoading && <div className="mt-4 rounded-xl border border-teal-400/20 bg-teal-400/10 p-3 text-sm text-teal-100">{climateMessage}</div>}
             {!climateLoading && climateMessage && <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-sm text-amber-100">{climateMessage}</div>}
             {climateData && <>
               <div id="climate-warning" className="mt-5 scroll-mt-24 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]"><div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">Weather intelligence</div>{climateData.current ? <div className="grid gap-3 sm:grid-cols-3"><div><div className="text-xs text-slate-500">Temperature</div><div className="mt-1 text-2xl font-bold text-white">{climateData.current.temperature}°C</div></div><div><div className="text-xs text-slate-500">Feels like</div><div className="mt-1 text-lg text-slate-200">{climateData.current.feelsLike}°C</div></div><div><div className="text-xs text-slate-500">Humidity</div><div className="mt-1 text-lg text-slate-200">{climateData.current.humidity}%</div></div><div><div className="text-xs text-slate-500">Rainfall</div><div className="mt-1 text-lg text-slate-200">{climateData.current.precipitation} mm</div></div><div><div className="text-xs text-slate-500">Wind</div><div className="mt-1 text-lg text-slate-200">{climateData.current.windSpeed} km/h</div></div><div><div className="text-xs text-slate-500">Conditions</div><div className="mt-1 text-lg text-slate-200">Code {climateData.current.weatherCode}</div></div></div> : <div className="text-sm text-slate-500">Weather data is currently unavailable for this location.</div>}</div><div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">AI Early Warning Center</div>{climateData.risks?.length ? climateData.risks.map((risk) => <div key={risk.type} className="mb-3 rounded-lg border border-amber-400/20 bg-amber-400/5 p-3"><div className="font-medium text-amber-200">⚠ {risk.type}</div><div className="mt-1 text-xs text-slate-300">Risk: {risk.level} · Confidence: {risk.confidence}</div><div className="mt-2 text-xs text-slate-400">{risk.evidence.join(' · ')}</div></div>) : <div className="text-sm text-slate-500">No risk assessment is available. No official alert is being claimed.</div>}</div></div>
-              <div id="climate-forecast" className="mt-4 scroll-mt-24 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="text-sm font-semibold">7-day forecast</div><span className="text-xs text-slate-500">Source: {climateData.source}</span></div><div className="grid gap-2 sm:grid-cols-4 lg:grid-cols-7">{(climateData.daily ?? []).map((day) => <div key={day.date} className="rounded-lg bg-slate-900 p-2 text-xs"><div className="text-slate-400">{new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })}</div><div className="mt-2 text-slate-200">{day.max}° / {day.min}°C</div><div className="mt-1 text-sky-300">Rain {day.precipitationProbability}%</div></div>)}</div></div>
+              <div id="climate-forecast" className="mt-4 scroll-mt-24 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="text-sm font-semibold">7-day forecast</div><span className="text-xs text-slate-500">Source: {climateData.source}</span></div><div className="grid gap-2 sm:grid-cols-4 lg:grid-cols-7">{(climateData.daily ?? []).map((day) => <div key={day.date} className="rounded-lg bg-slate-900 p-2 text-xs"><div className="text-slate-400">{new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })}</div><div className="mt-2 text-slate-200">{day.max}° / {day.min}°C</div><div className="mt-1 text-teal-300">Rain {day.precipitationProbability}%</div></div>)}</div></div>
               <div id="climate-history" className="mt-4 scroll-mt-24 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-2 text-sm font-semibold">Historical Trend Analysis</div><div className="text-sm text-slate-400">Historical weather and satellite trend data is unavailable until an archive provider and dated imagery are configured. No trend is inferred from the current forecast.</div></div>
               <div className="mt-4 grid gap-4 lg:grid-cols-2"><div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">Climate Profile</div><div className="text-sm text-slate-400">Historical climate data is unavailable until an archive provider is configured. Current forecast data must not be interpreted as long-term climate.</div></div><div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">Remote-sensing indicators</div><div className="space-y-2 text-sm text-slate-400"><div>NDVI: unavailable, required spectral bands are not present.</div><div>NDWI: unavailable, required spectral bands are not present.</div><div>NDBI: unavailable, required spectral bands are not present.</div><div>NBR: unavailable, required spectral bands are not present.</div></div></div></div>
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 flex items-center justify-between"><div className="text-sm font-semibold">Map layers</div><select value={climateLayer} onChange={(event) => setClimateLayer(event.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-300"><option value="satellite">Satellite</option><option value="weather">Weather</option><option value="ndvi">NDVI</option><option value="ndwi">NDWI</option><option value="ndbi">NDBI</option><option value="risk">Risk zones</option></select></div><div className="text-xs text-slate-400">Layer “{climateLayer}” is selected. A rendered layer requires compatible provider data for this AOI.</div></div>
@@ -1292,7 +1292,7 @@ function App() {
         <section hidden={activeSection !== 'provenance'} id="provenance" className="mb-6 scroll-mt-24 rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-[0.2em] text-cyan-300">Satellite Mission &amp; Data Provenance</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-teal-300">Satellite Mission &amp; Data Provenance</div>
               <p className="mt-1 text-xs text-slate-500">Values are read from configured metadata, uploaded imagery, and the current analysis result.</p>
             </div>
             <span className="rounded-full border border-slate-700 bg-slate-950/60 px-2 py-1 text-[10px] text-slate-400">No fabricated metadata</span>
@@ -1326,12 +1326,12 @@ function App() {
 
         {nearbyPermissionOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4 backdrop-blur-sm">
-            <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-cyan-400/30 bg-[#111c2d] p-6 shadow-2xl">
-              <div className="mb-3 flex items-center gap-2 text-lg font-semibold text-white"><LocateFixed className="text-cyan-300" /> Analyze My Area</div>
+            <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-teal-400/30 bg-[#111c2d] p-6 shadow-2xl">
+              <div className="mb-3 flex items-center gap-2 text-lg font-semibold text-white"><LocateFixed className="text-teal-300" /> Analyze My Area</div>
               <p className="text-sm leading-6 text-slate-300">{nearbyPermissionMessage}</p>
               <div className="mt-5 flex justify-end gap-3">
                 <button type="button" onClick={dismissNearbyPermission} className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">Not Now</button>
-                <button type="button" onClick={() => void runNearbyAnalysis()} className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-300">Allow Location</button>
+                <button type="button" onClick={() => void runNearbyAnalysis()} className="rounded-lg bg-teal-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-teal-300">Allow Location</button>
               </div>
             </div>
           </div>
@@ -1341,7 +1341,7 @@ function App() {
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <div className="flex items-center gap-2 text-lg font-semibold"><MapPinned size={19} className="text-cyan-300" /> Nearby AI Analysis</div>
+                <div className="flex items-center gap-2 text-lg font-semibold"><MapPinned size={19} className="text-teal-300" /> Nearby AI Analysis</div>
                 <p className="mt-1 text-xs text-slate-400">Potential anomalies only. Verify serious conditions with official or local sources.</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -1350,14 +1350,14 @@ function App() {
                     {[1000, 5000, 10000].map((radius) => <option key={radius} value={radius}>{radius / 1000} km</option>)}
                   </select>
                 </label>
-                <button type="button" onClick={nearbyAnalysis ? clearNearbyAnalysis : openNearbyAnalysis} className="rounded-lg border border-cyan-400/40 px-3 py-2 text-xs text-cyan-200 hover:bg-cyan-400/10">{nearbyAnalysis ? 'Clear Analysis' : 'Analyze Area'}</button>
+                <button type="button" onClick={nearbyAnalysis ? clearNearbyAnalysis : openNearbyAnalysis} className="rounded-lg border border-teal-400/40 px-3 py-2 text-xs text-teal-200 hover:bg-teal-400/10">{nearbyAnalysis ? 'Clear Analysis' : 'Analyze Area'}</button>
                 <button type="button" onClick={() => setNearbyHeatmapEnabled((current) => !current)} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300">Heatmap {nearbyHeatmapEnabled ? 'On' : 'Off'}</button>
                 <button type="button" onClick={() => setMapLayer((current) => current === 'satellite' ? 'street' : 'satellite')} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300">{mapLayer === 'satellite' ? 'Normal map' : 'Satellite map'}</button>
                 <button type="button" onClick={onGenerateNearbyReport} disabled={!nearbyAnalysis} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300 disabled:opacity-50">Generate Area Report</button>
               </div>
             </div>
 
-            {nearbyLoading && <div className="mt-5 rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-sm text-cyan-100">Checking location, imagery availability, and nearby change evidence...</div>}
+            {nearbyLoading && <div className="mt-5 rounded-xl border border-teal-400/20 bg-teal-400/10 p-4 text-sm text-teal-100">Checking location, imagery availability, and nearby change evidence...</div>}
             {nearbyError && <div role="alert" className="mt-5 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4 text-sm text-amber-100">{nearbyError}</div>}
             {nearbyAnalysis && !nearbyLoading && (
               <>
@@ -1369,7 +1369,7 @@ function App() {
                 </div>
                 <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-xs leading-5 text-amber-100">
                   {nearbyAnalysis.message}
-                  {!images.length && <button type="button" onClick={() => goToSection('analysis')} className="ml-3 rounded-lg border border-cyan-400/40 px-2 py-1 text-cyan-200 hover:bg-cyan-400/10">Upload area imagery</button>}
+                  {!images.length && <button type="button" onClick={() => goToSection('analysis')} className="ml-3 rounded-lg border border-teal-400/40 px-2 py-1 text-teal-200 hover:bg-teal-400/10">Upload area imagery</button>}
                   <div className="mt-2 flex items-center gap-2 text-slate-400">Heatmap opacity <input type="range" min="0" max="1" step="0.05" value={nearbyHeatmapOpacity} onChange={(event) => setNearbyHeatmapOpacity(Number(event.target.value))} /></div>
                 </div>
                 <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
@@ -1378,7 +1378,7 @@ function App() {
                     {nearbyIssueCategories.map((category) => (
                       <div key={category.key} className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
                         <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400">{category.label}</div>
-                        <div className={`mt-2 text-2xl font-semibold ${category.accent === 'emerald' ? 'text-emerald-300' : category.accent === 'cyan' ? 'text-cyan-300' : category.accent === 'amber' ? 'text-amber-300' : category.accent === 'lime' ? 'text-lime-300' : 'text-rose-300'}`}>{category.count}</div>
+                        <div className={`mt-2 text-2xl font-semibold ${category.accent === 'emerald' ? 'text-emerald-300' : category.accent === 'teal' ? 'text-teal-300' : category.accent === 'amber' ? 'text-amber-300' : category.accent === 'lime' ? 'text-lime-300' : 'text-rose-300'}`}>{category.count}</div>
                         <div className="mt-1 text-[11px] leading-4 text-slate-400">{category.description}</div>
                       </div>
                     ))}
@@ -1389,15 +1389,15 @@ function App() {
                       : 'No verified nearby issue markers were found for this live location, so the app is not reporting a confirmed issue without evidence.'}
                   </p>
                 </div>
-                <div className="mt-5 rounded-xl border border-blue-400/20 bg-blue-400/5 p-4">
+                <div className="mt-5 rounded-xl border border-teal-400/20 bg-teal-400/5 p-4">
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <div className="text-sm font-semibold text-blue-100">Proximity &amp; Nearby Feature Analysis</div>
+                    <div className="text-sm font-semibold text-teal-100">Proximity &amp; Nearby Feature Analysis</div>
                     <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">Current location</div>
                   </div>
                   <input value={proximityQuery} onChange={(event) => setProximityQuery(event.target.value)} placeholder="What important features or issues are near this location?" className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" />
                   <div className="mt-3 flex flex-wrap gap-2">
                     {['What important features or issues are near this location?', 'Find all major roads within 2 km of this location.', 'Show nearby hospitals and water features.', 'List hazards and built-up areas near me.'].map((question) => (
-                      <button key={question} type="button" onClick={() => setProximityQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-blue-400">{question}</button>
+                      <button key={question} type="button" onClick={() => setProximityQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-teal-400">{question}</button>
                     ))}
                   </div>
                   <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -1407,16 +1407,16 @@ function App() {
                           <div className="text-sm font-medium text-slate-100">{feature.label}</div>
                           <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${feature.priority === 'HIGH' ? 'bg-red-500/20 text-red-200' : feature.priority === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{feature.priority}</span>
                         </div>
-                        <div className="mt-2 text-xl font-semibold text-blue-200">{feature.distanceMeters} m</div>
+                        <div className="mt-2 text-xl font-semibold text-teal-200">{feature.distanceMeters} m</div>
                         <div className="mt-1 text-[11px] leading-5 text-slate-400">{feature.detail}</div>
                       </div>
                     )) : <div className="col-span-full rounded-xl border border-dashed border-slate-700 p-4 text-xs text-slate-400">No proximity features were calculated for this location yet. Click Locate me or choose a place to generate nearby feature details.</div>}
                   </div>
                   <div className="mt-3 text-xs text-slate-400">Example: Hospital → 1.2 km; Main road → 350 m; Lake → 800 m; Built-up area → 150 m; Detected hazard → 420 m.</div>
                 </div>
-                <div className="mt-4 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4">
+                <div className="mt-4 rounded-xl border border-teal-400/20 bg-teal-400/5 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="text-sm font-semibold text-cyan-100">Copernicus Data Space</div>
+                    <div className="text-sm font-semibold text-teal-100">Copernicus Data Space</div>
                     <span className="text-xs text-slate-400">Sentinel-2 catalogue search</span>
                   </div>
                   <div className="mt-2 text-xs text-slate-300">{satelliteSearchMessage || 'Searching for verified scenes...'}</div>
@@ -1426,14 +1426,14 @@ function App() {
                   <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div className="text-sm font-semibold">Issues Detected</div><div className="flex gap-2"><select value={nearbyCategory} onChange={(event) => setNearbyCategory(event.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-300"><option value="all">All categories</option><option value="environmental">Environmental</option><option value="infrastructure">Infrastructure</option><option value="urban">Urban</option><option value="agriculture">Agriculture</option><option value="disaster">Disaster</option></select><label className="flex items-center gap-2 text-xs text-slate-400">Confidence <input type="range" min="0" max="100" value={nearbyConfidenceThreshold} onChange={(event) => setNearbyConfidenceThreshold(Number(event.target.value))} /></label></div></div>
                     <div className="space-y-3">
-                      {nearbyAnalysis.issues.filter((issue) => (nearbyCategory === 'all' || issue.category === nearbyCategory) && (issue.confidence === null || issue.confidence >= nearbyConfidenceThreshold)).map((issue) => <button key={issue.id} type="button" onClick={() => setSelectedNearbyIssue(issue)} className={`w-full rounded-xl border p-3 text-left ${selectedNearbyIssue?.id === issue.id ? 'border-cyan-400/60 bg-cyan-400/10' : 'border-slate-800 bg-slate-900/70 hover:border-slate-600'}`}><div className="flex items-start justify-between gap-3"><div><div className="font-medium text-amber-200">⚠ {issue.issue_type}</div><div className="mt-1 text-xs text-slate-400">{(issue.distance_meters / 1000).toFixed(issue.distance_meters < 1000 ? 0 : 1)} {issue.distance_meters < 1000 ? 'm' : 'km'} from selected location · {issue.category}</div></div><span title="Severity indicates anomaly magnitude or priority, not confirmed real-world danger." className={`rounded-full px-2 py-1 text-[10px] font-semibold ${issue.severity === 'HIGH' ? 'bg-red-500/20 text-red-200' : issue.severity === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{issue.severity}</span></div><div className="mt-2 text-xs text-slate-300">Confidence: {issue.confidence === null ? 'Unavailable' : `${issue.confidence}%`} · Reliability: {issue.reliability}</div></button>)}
+                      {nearbyAnalysis.issues.filter((issue) => (nearbyCategory === 'all' || issue.category === nearbyCategory) && (issue.confidence === null || issue.confidence >= nearbyConfidenceThreshold)).map((issue) => <button key={issue.id} type="button" onClick={() => setSelectedNearbyIssue(issue)} className={`w-full rounded-xl border p-3 text-left ${selectedNearbyIssue?.id === issue.id ? 'border-teal-400/60 bg-teal-400/10' : 'border-slate-800 bg-slate-900/70 hover:border-slate-600'}`}><div className="flex items-start justify-between gap-3"><div><div className="font-medium text-amber-200">⚠ {issue.issue_type}</div><div className="mt-1 text-xs text-slate-400">{(issue.distance_meters / 1000).toFixed(issue.distance_meters < 1000 ? 0 : 1)} {issue.distance_meters < 1000 ? 'm' : 'km'} from selected location · {issue.category}</div></div><span title="Severity indicates anomaly magnitude or priority, not confirmed real-world danger." className={`rounded-full px-2 py-1 text-[10px] font-semibold ${issue.severity === 'HIGH' ? 'bg-red-500/20 text-red-200' : issue.severity === 'MEDIUM' ? 'bg-amber-500/20 text-amber-200' : 'bg-emerald-500/20 text-emerald-200'}`}>{issue.severity}</span></div><div className="mt-2 text-xs text-slate-300">Confidence: {issue.confidence === null ? 'Unavailable' : `${issue.confidence}%`} · Reliability: {issue.reliability}</div></button>)}
                           {!nearbyAnalysis.issues.length && <div className="rounded-xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">No verified issues detected. This is not a finding that the area is clear: georeferenced imagery analysis is unavailable, so SatQuery did not invent incidents or markers.</div>}
                     </div>
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
                     <div className="mb-3 text-sm font-semibold">Evidence and follow-up</div>
                     {selectedNearbyIssue ? <><div className="text-sm text-slate-200">{selectedNearbyIssue.description}</div><div className="mt-3 text-xs text-slate-400">Evidence</div><ul className="mt-2 space-y-2 text-xs text-slate-300">{selectedNearbyIssue.evidence.map((item) => <li key={item}>• {item}</li>)}</ul><div className="mt-4 grid grid-cols-2 gap-2 text-xs"><div><span className="text-slate-500">Area</span><div className="mt-1 text-slate-200">{selectedNearbyIssue.area === null ? 'Unavailable' : `${selectedNearbyIssue.area} km²`}</div></div><div><span className="text-slate-500">Detected</span><div className="mt-1 text-slate-200">{new Date(selectedNearbyIssue.detected_at).toLocaleDateString()}</div></div></div></> : <div className="text-sm text-slate-500">Select an issue to inspect its evidence.</div>}
-                    <div className="mt-5"><input value={nearbyQuery} onChange={(event) => setNearbyQuery(event.target.value)} placeholder="Ask something specific about this area..." className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" /><div className="mt-2 flex flex-wrap gap-2">{['Is there any recent surface change?', 'Are there signs of flooding?', 'Has vegetation changed?', 'Has the built-up area increased?'].map((question) => <button key={question} type="button" onClick={() => setNearbyQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-cyan-400">{question}</button>)}</div></div>
+                    <div className="mt-5"><input value={nearbyQuery} onChange={(event) => setNearbyQuery(event.target.value)} placeholder="Ask something specific about this area..." className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 placeholder:text-slate-500" /><div className="mt-2 flex flex-wrap gap-2">{['Is there any recent surface change?', 'Are there signs of flooding?', 'Has vegetation changed?', 'Has the built-up area increased?'].map((question) => <button key={question} type="button" onClick={() => setNearbyQuery(question)} className="rounded-full border border-slate-700 px-2 py-1 text-[10px] text-slate-300 hover:border-teal-400">{question}</button>)}</div></div>
                   </div>
                 </div>
                 <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950/60 p-4"><div className="mb-3 text-sm font-semibold">Issue summary &amp; reliability</div><p className="text-sm leading-6 text-slate-300">{nearbyAnalysis.issues.length ? 'The selected area shows indications requiring further verification.' : 'No issue summary is available because verified, georeferenced evidence was not returned for this area.'}</p><div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-3"><div><span className="text-slate-500">Source</span><div className="mt-1 text-slate-200">{satelliteScenes.length ? 'Copernicus Sentinel-2 catalogue' : 'Unavailable'}</div></div><div><span className="text-slate-500">Evidence</span><div className="mt-1 text-slate-200">{nearbyAnalysis.issues.length ? 'Uploaded/provider imagery' : 'Not sufficient'}</div></div><div><span className="text-slate-500">Reliability</span><div className="mt-1 text-amber-200">{nearbyAnalysis.issues.length ? 'Review required' : 'Unavailable'}</div></div></div><div className="mt-4 grid gap-2 text-xs text-slate-300 md:grid-cols-5">{nearbyAnalysis.execution_trace.map((step) => <div key={step} className="rounded-lg bg-slate-900 px-2 py-2">✓ {step}</div>)}</div></div>
@@ -1443,7 +1443,7 @@ function App() {
         </section>
 
         <section hidden={activeSection !== 'dataset'} id="dataset" className="mb-6 scroll-mt-24 overflow-hidden rounded-2xl border border-emerald-500/20 bg-slate-900/80 shadow-glow">
-          <div className="border-b border-slate-800 bg-gradient-to-r from-emerald-500/10 via-slate-900 to-blue-500/10 p-5">
+          <div className="border-b border-slate-800 bg-gradient-to-r from-emerald-500/10 via-slate-900 to-teal-500/10 p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="mb-2 text-xs uppercase tracking-[0.22em] text-emerald-300">Dataset intelligence dashboard</div>
@@ -1471,11 +1471,11 @@ function App() {
                 <div className="flex items-center justify-between"><span>Fine-tuned model connection</span><span className="text-amber-300">Pending</span></div>
               </div>
             </div>
-            <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
-              <div className="mb-2 text-sm font-semibold text-blue-100">Sentinel-1 SAR</div>
+            <div className="rounded-xl border border-teal-500/20 bg-teal-500/5 p-4">
+              <div className="mb-2 text-sm font-semibold text-teal-100">Sentinel-1 SAR</div>
               <p className="text-xs leading-5 text-slate-400">Radar backscatter helps inspect surface texture, structure, moisture, and all-weather observations.</p>
-              <div className="mt-4 h-2 rounded-full bg-slate-800"><div className="h-2 w-4/5 rounded-full bg-blue-400" /></div>
-              <div className="mt-2 text-xs text-blue-200">Structure and texture signal</div>
+              <div className="mt-4 h-2 rounded-full bg-slate-800"><div className="h-2 w-4/5 rounded-full bg-teal-400" /></div>
+              <div className="mt-2 text-xs text-teal-200">Structure and texture signal</div>
             </div>
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
               <div className="mb-2 text-sm font-semibold text-emerald-100">Sentinel-2 multispectral</div>
@@ -1489,7 +1489,7 @@ function App() {
         <div hidden={activeSection !== 'analysis' && activeSection !== 'map' && activeSection !== 'nearby'} id="analysis" className="mx-auto max-w-5xl space-y-6 scroll-mt-24">
           <aside className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
             <div className="mb-4 flex items-center gap-2 text-lg font-semibold">
-              <ImageIcon size={18} className="text-blue-300" /> {currentLabels.input}
+              <ImageIcon size={18} className="text-teal-300" /> {currentLabels.input}
             </div>
 
             <div className="mb-5">
@@ -1517,10 +1517,10 @@ function App() {
             <div className="rounded-2xl border border-dashed border-slate-600 bg-slate-950/50 p-4">
               <div className="mb-3 flex items-center justify-between text-sm text-slate-300">
                 <span>{mode === 'before_after' ? 'Upload Before and After images' : currentLabels.upload}</span>
-                <span className="rounded-full bg-blue-500/20 px-2 py-1 text-xs text-blue-200">{currentLabels.demo}</span>
+                <span className="rounded-full bg-teal-500/20 px-2 py-1 text-xs text-teal-200">{currentLabels.demo}</span>
               </div>
-              <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-8 text-center text-slate-300 hover:border-blue-400">
-                <Upload size={28} className="text-blue-300" />
+              <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-8 text-center text-slate-300 hover:border-teal-400">
+                <Upload size={28} className="text-teal-300" />
                 <span className="font-medium">{mode === 'before_after' ? 'Choose 2 images: Before first, After second' : 'Drop image or browse'}</span>
                 <input type="file" accept="image/*" multiple={mode !== 'single'} className="hidden" onChange={(e) => handleFiles(e.target.files)} />
               </label>
@@ -1528,7 +1528,7 @@ function App() {
               <div className="mt-4 space-y-2">
                 {images.map((img) => (
                   <div key={img.id} className="flex items-center justify-between rounded-lg bg-slate-800 px-2 py-2 text-sm">
-                    <span className="truncate"><span className="mr-2 text-xs uppercase text-cyan-300">{mode === 'before_after' ? (img.type === 'before' ? 'Before' : 'After') : img.type}</span>{img.name}</span>
+                    <span className="truncate"><span className="mr-2 text-xs uppercase text-teal-300">{mode === 'before_after' ? (img.type === 'before' ? 'Before' : 'After') : img.type}</span>{img.name}</span>
                     <button className="text-red-300" type="button" onClick={() => setImages([])}>Remove</button>
                   </div>
                 ))}
@@ -1539,16 +1539,16 @@ function App() {
           <section className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-lg font-semibold">
-                <Layers3 size={18} className="text-blue-300" /> {currentLabels.viewer}
+                <Layers3 size={18} className="text-teal-300" /> {currentLabels.viewer}
               </div>
               <button type="button" onClick={() => setHeatmapEnabled((current) => !current)} className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
                 {currentLabels.heatmap}
               </button>
             </div>
 
-            <div className="mb-4 rounded-xl border border-blue-500/20 bg-slate-950/70 p-3">
+            <div className="mb-4 rounded-xl border border-teal-500/20 bg-slate-950/70 p-3">
               <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200">
-                <CalendarClock size={15} className="text-blue-300" /> Time-based comparison
+                <CalendarClock size={15} className="text-teal-300" /> Time-based comparison
               </div>
               <div className="grid gap-3 md:grid-cols-2">
                 <label className="text-xs text-slate-400">
@@ -1599,17 +1599,17 @@ function App() {
                   }}
                 />
               ))}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-slate-950/60 via-transparent to-blue-500/10" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-slate-950/60 via-transparent to-teal-500/10" />
               <div className="absolute left-5 top-5 rounded-lg bg-slate-950/75 px-2 py-1 text-xs text-slate-200">Satellite image</div>
               <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-white/10 bg-slate-950/60 p-3 text-sm text-slate-200">
-                <div className="flex items-center gap-2 font-medium"><MapPinned size={15} className="text-blue-300" /> Analysis area</div>
+                <div className="flex items-center gap-2 font-medium"><MapPinned size={15} className="text-teal-300" /> Analysis area</div>
                 <div className="mt-2 text-xs text-slate-400">Detected objects: 42 · Average confidence: 91.6%</div>
               </div>
             </div>
 
             <div className="mt-5 grid gap-4 xl:grid-cols-3">
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><Activity size={15} className="text-blue-300" /> Land-cover distribution</div>
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><Activity size={15} className="text-teal-300" /> Land-cover distribution</div>
                 <div className="mt-4 h-44">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -1623,7 +1623,7 @@ function App() {
               </div>
 
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><BarChart3 size={15} className="text-blue-300" /> Change detection</div>
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-200"><BarChart3 size={15} className="text-teal-300" /> Change detection</div>
                 <div className="mt-4 h-44">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analysis?.result?.detected_changes ?? []}>
@@ -1638,7 +1638,7 @@ function App() {
               </div>
 
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-200"><CheckCircle2 size={15} className="text-blue-300" /> Statistics</div>
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-200"><CheckCircle2 size={15} className="text-teal-300" /> Statistics</div>
                 <div className="space-y-2 text-sm text-slate-300">
                   <div className="flex justify-between"><span>Confidence</span><span className="font-semibold text-emerald-300">{analysis?.result?.confidence_score ?? 0}%</span></div>
                   <div className="flex justify-between"><span>Reliability</span><span className="font-semibold text-violet-300">{analysis?.result?.reliability_score ?? 0}%</span></div>
@@ -1652,8 +1652,8 @@ function App() {
 
             <div hidden={activeSection !== 'map' && activeSection !== 'nearby'} id="map" className="mt-5 scroll-mt-24 rounded-xl border border-slate-800 bg-slate-950/70 p-3">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-100"><Map size={15} className="text-blue-300" /> {currentLabels.map}</div>
-                <button type="button" onClick={() => requestCurrentLocation(true)} className="flex items-center gap-2 rounded-lg border border-blue-400/40 bg-blue-500/10 px-2 py-1.5 text-xs text-blue-200 hover:bg-blue-500/20">
+                <div className="flex items-center gap-2 text-sm font-medium text-slate-100"><Map size={15} className="text-teal-300" /> {currentLabels.map}</div>
+                <button type="button" onClick={() => requestCurrentLocation(true)} className="flex items-center gap-2 rounded-lg border border-teal-400/40 bg-teal-500/10 px-2 py-1.5 text-xs text-teal-200 hover:bg-teal-500/20">
                   <LocateFixed size={14} /> Locate me
                 </button>
               </div>
@@ -1661,9 +1661,9 @@ function App() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Search size={15} className="pointer-events-none absolute left-3 top-3 text-slate-500" />
-                    <input value={placeSearch} onChange={(event) => { setPlaceSearch(event.target.value); setSelectedPlaceName('') }} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Search any Indian place, address, landmark, or coordinates" aria-label="Search Indian places" />
+                    <input value={placeSearch} onChange={(event) => { setPlaceSearch(event.target.value); setSelectedPlaceName('') }} className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-400" placeholder="Search any Indian place, address, landmark, or coordinates" aria-label="Search Indian places" />
                   </div>
-                  <button type="submit" disabled={!placeSearch.trim() || placeSearchLoading} className="rounded-lg bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50">{placeSearchLoading ? 'Searching...' : 'Search India'}</button>
+                  <button type="submit" disabled={!placeSearch.trim() || placeSearchLoading} className="rounded-lg bg-teal-500 px-3 py-2 text-sm font-medium text-white hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-50">{placeSearchLoading ? 'Searching...' : 'Search India'}</button>
                 </div>
                 {placeResults.length > 0 && (
                   <div className="absolute left-0 right-0 top-full z-[1000] mt-1 overflow-hidden rounded-lg border border-slate-700 bg-slate-900 shadow-xl">
@@ -1692,8 +1692,8 @@ function App() {
                     />
                     {safeLocation && (
                       <>
-                        <Circle center={[safeLocation.lat, safeLocation.lng]} radius={nearbyAnalysis?.radius ?? nearbyRadius} pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.18 }} />
-                        <CircleMarker center={[safeLocation.lat, safeLocation.lng]} radius={9} pathOptions={{ color: '#ffffff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }}>
+                        <Circle center={[safeLocation.lat, safeLocation.lng]} radius={nearbyAnalysis?.radius ?? nearbyRadius} pathOptions={{ color: '#14b8a6', fillColor: '#14b8a6', fillOpacity: 0.18 }} />
+                        <CircleMarker center={[safeLocation.lat, safeLocation.lng]} radius={9} pathOptions={{ color: '#ffffff', weight: 3, fillColor: '#0f766e', fillOpacity: 1 }}>
                           <MapTooltip direction="top" offset={[0, -8]} permanent>
                             {selectedPlaceName ? 'Selected place' : 'You are here'}
                           </MapTooltip>
@@ -1717,14 +1717,14 @@ function App() {
 
           <aside className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
             <div className="mb-4 flex items-center gap-2 text-lg font-semibold">
-              <MessageSquareText size={18} className="text-blue-300" /> {currentLabels.query}
+              <MessageSquareText size={18} className="text-teal-300" /> {currentLabels.query}
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <textarea value={query} onChange={(e) => setQuery(e.target.value)} rows={5} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500" placeholder="Ask a question about the image..." />
                 {voiceSupported && (
-                  <button type="button" onClick={handleVoice} className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-blue-200">
+                  <button type="button" onClick={handleVoice} className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-teal-200">
                     <Mic size={18} />
                   </button>
                 )}
@@ -1737,7 +1737,7 @@ function App() {
 
               <div className="flex flex-wrap gap-2">
                 {suggestedQuestions.map((item) => (
-                  <button key={item} className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-200 hover:border-blue-500" type="button" onClick={() => setQuery(item)}>
+                  <button key={item} className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-200 hover:border-teal-500" type="button" onClick={() => setQuery(item)}>
                     {item}
                   </button>
                 ))}
@@ -1746,12 +1746,12 @@ function App() {
                 </button>
               </div>
 
-              <button type="button" onClick={() => void runAnalysis()} className="w-full rounded-xl bg-blue-500 px-4 py-3 font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400 disabled:opacity-70">
+              <button type="button" onClick={() => void runAnalysis()} className="w-full rounded-xl bg-teal-500 px-4 py-3 font-semibold text-white shadow-lg shadow-teal-500/30 transition hover:bg-teal-400 disabled:opacity-70">
                 {isLoading ? currentLabels.analyzing : currentLabels.analyze}
               </button>
 
               {isLoading && (
-                <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 text-sm text-blue-100">
+                <div className="rounded-xl border border-teal-500/30 bg-teal-500/10 p-3 text-sm text-teal-100">
                   <div className="mb-2 font-medium">{currentLabels.analyzing}</div>
                   <ul className="space-y-2 text-xs">
                     <li>✓ Upload verified</li>
@@ -1775,7 +1775,7 @@ function App() {
         <section hidden={activeSection !== 'results'} id="results" className="mt-6 scroll-mt-24 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-lg font-semibold">
-              <ShieldCheck size={18} className="text-blue-300" /> {currentLabels.result}
+              <ShieldCheck size={18} className="text-teal-300" /> {currentLabels.result}
             </div>
             <button type="button" onClick={onGenerateReport} className="flex items-center gap-2 rounded-xl bg-slate-800 px-3 py-2 text-sm text-slate-200 hover:bg-slate-700">
               <FileText size={15} /> {currentLabels.pdf}
@@ -1787,7 +1787,7 @@ function App() {
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div className="text-xs uppercase tracking-[0.2em] text-slate-400">AI Explanation</div>
                 {analysis?.result?.detailed_explanation && (
-                  <button type="button" onClick={() => isSpeaking ? stopSpeaking() : speakAnswer(analysis.result?.detailed_explanation || '')} className="flex items-center gap-1 rounded-lg border border-slate-700 px-2 py-1 text-xs text-blue-200 hover:border-blue-400" title={isSpeaking ? 'Stop voice answer' : 'Play voice answer'}>
+                  <button type="button" onClick={() => isSpeaking ? stopSpeaking() : speakAnswer(analysis.result?.detailed_explanation || '')} className="flex items-center gap-1 rounded-lg border border-slate-700 px-2 py-1 text-xs text-teal-200 hover:border-teal-400" title={isSpeaking ? 'Stop voice answer' : 'Play voice answer'}>
                     {isSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
                     {isSpeaking ? 'Stop' : 'Listen'}
                   </button>
@@ -1807,7 +1807,7 @@ function App() {
                 {(analysis?.result?.detected_changes ?? []).map((change) => (
                   <div key={change.label} className="flex items-center justify-between gap-2">
                     <span>{change.label}</span>
-                    <span className="font-semibold text-blue-300">{change.percentage}%</span>
+                    <span className="font-semibold text-teal-300">{change.percentage}%</span>
                   </div>
                 ))}
               </div>
@@ -1880,7 +1880,7 @@ function App() {
             <div className="mb-3 text-lg font-semibold">{currentLabels.recommendations}</div>
             <ul className="space-y-3 text-sm text-slate-200">
               {(analysis?.result?.recommendations ?? []).map((item) => (
-                <li key={item} className="flex gap-3 rounded-xl bg-slate-950/60 p-3"><span className="mt-1 h-2 w-2 rounded-full bg-blue-400" />{item}</li>
+                <li key={item} className="flex gap-3 rounded-xl bg-slate-950/60 p-3"><span className="mt-1 h-2 w-2 rounded-full bg-teal-400" />{item}</li>
               ))}
             </ul>
           </div>
@@ -1888,39 +1888,39 @@ function App() {
 
         <section hidden={activeSection !== 'modes'} id="modes" className="mt-6 scroll-mt-24 grid gap-6 xl:grid-cols-3">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><Activity size={18} className="text-blue-300" /> Disaster analysis mode</div>
+            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><Activity size={18} className="text-teal-300" /> Disaster analysis mode</div>
             <div className="space-y-2 text-sm text-slate-200">
               <div className="flex items-center justify-between"><span>Affected Area</span><span className="font-semibold text-white">{analysis?.result?.area_measurements?.affected_area ?? 14.2} km²</span></div>
               <div className="flex items-center justify-between"><span>Severity</span><span className="text-red-300">{mode === 'disaster' && analysis ? 'High' : 'Not run'}</span></div>
               <div className="flex items-center justify-between"><span>Confidence</span><span className="text-emerald-300">{mode === 'disaster' ? `${analysis?.result?.confidence_score ?? 89}%` : '89%'}</span></div>
-              <button type="button" onClick={() => startModeAnalysis('disaster', 'Which areas are affected by flooding or disaster damage?')} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze disaster imagery</button>
+              <button type="button" onClick={() => startModeAnalysis('disaster', 'Which areas are affected by flooding or disaster damage?')} className="mt-3 w-full rounded-lg border border-teal-400/40 bg-teal-500/15 px-3 py-2 text-xs text-teal-200 hover:bg-teal-500/25">Analyze disaster imagery</button>
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><BarChart3 size={18} className="text-blue-300" /> Agriculture monitoring</div>
+            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><BarChart3 size={18} className="text-teal-300" /> Agriculture monitoring</div>
             <div className="space-y-2 text-sm text-slate-200">
               <div className="flex items-center justify-between"><span>Agricultural Area</span><span className="font-semibold text-white">42.8 km²</span></div>
               <div className="flex items-center justify-between"><span>Vegetation Change</span><span className="text-yellow-300">-6.4%</span></div>
-              <div className="flex items-center justify-between"><span>Stress Regions</span><span className="text-cyan-300">7</span></div>
-              <button type="button" onClick={() => startModeAnalysis('agriculture', 'Has vegetation or agricultural land changed?')} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze agriculture</button>
+              <div className="flex items-center justify-between"><span>Stress Regions</span><span className="text-teal-300">7</span></div>
+              <button type="button" onClick={() => startModeAnalysis('agriculture', 'Has vegetation or agricultural land changed?')} className="mt-3 w-full rounded-lg border border-teal-400/40 bg-teal-500/15 px-3 py-2 text-xs text-teal-200 hover:bg-teal-500/25">Analyze agriculture</button>
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><MapPinned size={18} className="text-blue-300" /> Urban growth analysis</div>
+            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><MapPinned size={18} className="text-teal-300" /> Urban growth analysis</div>
             <div className="space-y-2 text-sm text-slate-200">
               <div className="flex items-center justify-between"><span>Urban Expansion</span><span className="font-semibold text-white">13.7%</span></div>
               <div className="flex items-center justify-between"><span>New Structures</span><span className="text-emerald-300">126</span></div>
               <div className="flex items-center justify-between"><span>Changed Area</span><span className="text-violet-300">17.2 km²</span></div>
-              <button type="button" onClick={() => startModeAnalysis('urban_growth', 'Are there signs of urban growth or new construction?')} className="mt-3 w-full rounded-lg border border-blue-400/40 bg-blue-500/15 px-3 py-2 text-xs text-blue-200 hover:bg-blue-500/25">Analyze urban growth</button>
+              <button type="button" onClick={() => startModeAnalysis('urban_growth', 'Are there signs of urban growth or new construction?')} className="mt-3 w-full rounded-lg border border-teal-400/40 bg-teal-500/15 px-3 py-2 text-xs text-teal-200 hover:bg-teal-500/25">Analyze urban growth</button>
             </div>
           </div>
         </section>
 
         <section hidden={activeSection !== 'comparison'} id="comparison" className="mt-6 scroll-mt-24 grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><Layers3 size={18} className="text-blue-300" /> {currentLabels.opticalSar}</div>
+            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><Layers3 size={18} className="text-teal-300" /> {currentLabels.opticalSar}</div>
             <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
                 <div className="mb-2 text-sm font-medium text-slate-200">Optical</div>
@@ -1936,13 +1936,13 @@ function App() {
           </div>
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><CheckCircle2 size={18} className="text-blue-300" /> Multi-question discussion</div>
+            <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><CheckCircle2 size={18} className="text-teal-300" /> Multi-question discussion</div>
             <div className="space-y-3 text-sm text-slate-200">
               {conversation.map((item, index) => (
                 <div key={`${item.question}-${index}`} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="font-medium text-blue-300">Q: {item.question}</div>
-                    <button type="button" onClick={() => speakAnswer(item.answer)} className="rounded-lg border border-slate-700 p-1.5 text-blue-200 hover:border-blue-400" title="Listen to answer">
+                    <div className="font-medium text-teal-300">Q: {item.question}</div>
+                    <button type="button" onClick={() => speakAnswer(item.answer)} className="rounded-lg border border-slate-700 p-1.5 text-teal-200 hover:border-teal-400" title="Listen to answer">
                       <Volume2 size={14} />
                     </button>
                   </div>
@@ -1954,10 +1954,10 @@ function App() {
         </section>
 
         {isChatbotOpen && (
-          <section className="fixed bottom-24 right-4 z-50 flex w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-blue-400/30 bg-slate-950 shadow-2xl shadow-blue-950/50">
+          <section className="fixed bottom-24 right-4 z-50 flex w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-teal-400/30 bg-slate-950 shadow-2xl shadow-teal-950/50">
             <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-3">
               <div>
-                <div className="flex items-center gap-2 font-semibold text-slate-100"><MessageCircle size={17} className="text-blue-300" /> SatQuery assistant</div>
+                <div className="flex items-center gap-2 font-semibold text-slate-100"><MessageCircle size={17} className="text-teal-300" /> SatQuery assistant</div>
                 <div className="mt-0.5 text-xs text-slate-400">Ask about your current satellite analysis</div>
               </div>
               <button type="button" onClick={() => setIsChatbotOpen(false)} className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white" title="Close assistant">×</button>
@@ -1965,25 +1965,25 @@ function App() {
             <div className="max-h-80 space-y-3 overflow-y-auto p-3">
               {conversation.slice(-6).map((item, index) => (
                 <div key={`${item.question}-${index}`} className="space-y-2 text-sm">
-                  <div className="ml-8 rounded-xl rounded-tr-sm bg-blue-500/20 px-3 py-2 text-blue-100">{item.question}</div>
-                  {item.answer ? <div className="mr-8 flex items-start gap-2 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-300"><span className="flex-1">{item.answer}</span><button type="button" onClick={() => isSpeaking ? stopSpeaking() : speakAnswer(item.answer)} className="shrink-0 rounded-lg p-1 text-blue-300 hover:bg-slate-800" title={isSpeaking ? 'Stop speaking' : 'Read answer aloud'}>{isSpeaking ? <VolumeX size={15} /> : <Volume2 size={15} />}</button></div> : <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-500">Thinking...</div>}
+                  <div className="ml-8 rounded-xl rounded-tr-sm bg-teal-500/20 px-3 py-2 text-teal-100">{item.question}</div>
+                  {item.answer ? <div className="mr-8 flex items-start gap-2 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-300"><span className="flex-1">{item.answer}</span><button type="button" onClick={() => isSpeaking ? stopSpeaking() : speakAnswer(item.answer)} className="shrink-0 rounded-lg p-1 text-teal-300 hover:bg-slate-800" title={isSpeaking ? 'Stop speaking' : 'Read answer aloud'}>{isSpeaking ? <VolumeX size={15} /> : <Volume2 size={15} />}</button></div> : <div className="mr-8 rounded-xl rounded-tl-sm border border-slate-800 bg-slate-900 px-3 py-2 text-slate-500">Thinking...</div>}
                 </div>
               ))}
             </div>
             <form onSubmit={(event) => { event.preventDefault(); void sendChatbotMessage() }} className="flex gap-2 border-t border-slate-800 p-3">
-              <input value={chatbotInput} onChange={(event) => setChatbotInput(event.target.value)} className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-400" placeholder="Ask a question..." aria-label="Chatbot question" />
-              <button type="button" onClick={handleChatbotVoice} className={`rounded-xl border p-2.5 ${chatbotVoiceStatus === 'listening' ? 'border-red-400 bg-red-500/20 text-red-200' : 'border-slate-700 bg-slate-900 text-blue-200 hover:border-blue-400'}`} title={chatbotVoiceStatus === 'listening' ? 'Listening...' : 'Ask by voice'}><Mic size={17} /></button>
-              <button type="submit" disabled={!chatbotInput.trim() || isChatbotTyping} className="rounded-xl bg-blue-500 p-2.5 text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50" title="Send message"><Send size={17} /></button>
+              <input value={chatbotInput} onChange={(event) => setChatbotInput(event.target.value)} className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-teal-400" placeholder="Ask a question..." aria-label="Chatbot question" />
+              <button type="button" onClick={handleChatbotVoice} className={`rounded-xl border p-2.5 ${chatbotVoiceStatus === 'listening' ? 'border-red-400 bg-red-500/20 text-red-200' : 'border-slate-700 bg-slate-900 text-teal-200 hover:border-teal-400'}`} title={chatbotVoiceStatus === 'listening' ? 'Listening...' : 'Ask by voice'}><Mic size={17} /></button>
+              <button type="submit" disabled={!chatbotInput.trim() || isChatbotTyping} className="rounded-xl bg-teal-500 p-2.5 text-white hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-50" title="Send message"><Send size={17} /></button>
             </form>
           </section>
         )}
 
-        <button type="button" onClick={() => setIsChatbotOpen((open) => !open)} className="fixed bottom-6 right-4 z-50 flex items-center gap-2 rounded-full border border-blue-300/40 bg-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-blue-950/50 transition hover:bg-blue-400" title="Open SatQuery assistant">
+        <button type="button" onClick={() => setIsChatbotOpen((open) => !open)} className="fixed bottom-6 right-4 z-50 flex items-center gap-2 rounded-full border border-teal-300/40 bg-teal-500 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-teal-950/50 transition hover:bg-teal-400" title="Open SatQuery assistant">
           <MessageCircle size={18} /> Chat
         </button>
 
         <section hidden={activeSection !== 'tools'} id="tools" className="mt-6 scroll-mt-24 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-          <div className="mb-4 flex items-center gap-2 text-lg font-semibold"><CheckCircle2 size={18} className="text-blue-300" /> Area calculation</div>
+          <div className="mb-4 flex items-center gap-2 text-lg font-semibold"><CheckCircle2 size={18} className="text-teal-300" /> Area calculation</div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-200">
               <div>Agricultural Area</div>
@@ -2004,7 +2004,7 @@ function App() {
         </section>
 
         <section hidden={activeSection !== 'tools'} className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-          <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><ShieldCheck size={18} className="text-blue-300" /> {currentLabels.multilingual}</div>
+          <div className="mb-3 flex items-center gap-2 text-lg font-semibold"><ShieldCheck size={18} className="text-teal-300" /> {currentLabels.multilingual}</div>
           <div className="flex flex-wrap gap-3 text-sm text-slate-200">
             <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1">English · Hindi · Kannada · Telugu · Tamil · Malayalam · Marathi</span>
             <span className="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-1">Español</span>
