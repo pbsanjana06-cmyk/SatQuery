@@ -480,6 +480,25 @@ function App() {
     })
   }
 
+  const searchCopernicusScenes = async (location: { lat: number; lng: number }) => {
+    setSatelliteSearchMessage('Loading Copernicus Dataset products...')
+    if (!isSupabaseConfigured) {
+      setSatelliteSearchMessage('Configure Supabase to search the Copernicus Dataset.')
+      return
+    }
+    const { data, error } = await supabase.functions.invoke('satellite-search', { body: { latitude: location.lat, longitude: location.lng, radius: nearbyRadius, cloudCover: 30 } })
+    if (error) {
+      setSatelliteSearchMessage('Copernicus Dataset search is unavailable. Check the Supabase function configuration.')
+      return
+    }
+    if (data?.status === 'ready') {
+      setSatelliteScenes(data.scenes ?? [])
+      setSatelliteSearchMessage(data.scenes?.length ? `${data.scenes.length} Copernicus Dataset product(s) found.` : 'No Copernicus Dataset products matched this location and date range.')
+    } else {
+      setSatelliteSearchMessage(data?.message || 'No Copernicus Dataset data is available.')
+    }
+  }
+
   const runNearbyAnalysis = async (overrideLocation?: { lat: number; lng: number }) => {
     setNearbyPermissionOpen(false)
     setNearbyLoading(true)
@@ -522,16 +541,7 @@ function App() {
       }
     }
 
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase.functions.invoke('satellite-search', { body: { latitude: location.lat, longitude: location.lng, radius: nearbyRadius, cloudCover: 30 } })
-      if (error) setSatelliteSearchMessage('Copernicus search is not configured yet. Add its credentials to Supabase Edge Function secrets.')
-      else if (data?.status === 'ready') {
-        setSatelliteScenes(data.scenes ?? [])
-        setSatelliteSearchMessage(data.scenes?.length ? `${data.scenes.length} Copernicus Sentinel-2 scene(s) found.` : 'No Sentinel-2 scenes matched this location and date range.')
-      } else setSatelliteSearchMessage(data?.message || 'No satellite provider is configured.')
-    } else {
-      setSatelliteSearchMessage('Configure Supabase to search Copernicus Data Space.')
-    }
+    await searchCopernicusScenes(location)
   }
 
   const clearNearbyAnalysis = () => {
@@ -1459,6 +1469,31 @@ function App() {
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Text annotations</div><div className="mt-2 text-2xl font-bold text-white">9.6M</div><div className="mt-1 text-xs text-slate-400">Captions, VQA, regions</div></div>
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Sensor pair</div><div className="mt-2 text-lg font-bold text-white">S1 + S2</div><div className="mt-1 text-xs text-slate-400">SAR + multispectral</div></div>
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Dataset</div><div className="mt-2 text-lg font-bold text-emerald-300">Copernicus</div><div className="mt-1 text-xs text-slate-400">Earth observation data</div></div>
+          </div>
+
+          <div className="border-b border-slate-200 bg-white p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-slate-900">Copernicus Dataset products</div>
+                <div className="mt-1 text-xs text-slate-500">Real Sentinel-2 products returned for the selected location.</div>
+              </div>
+              <button type="button" disabled={!safeLocation} onClick={() => safeLocation && void searchCopernicusScenes(safeLocation)} className="rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50">Refresh dataset</button>
+            </div>
+            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">{satelliteSearchMessage || (safeLocation ? 'Refresh to load Copernicus products for this location.' : 'Select a location on the map before loading products.')}</div>
+            {satelliteScenes.length > 0 && (
+              <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                {satelliteScenes.slice(0, 6).map((scene) => (
+                  <a key={scene.id} href={scene.productUrl ?? '#'} target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 bg-slate-50 p-3 hover:border-amber-400">
+                    <div className="truncate text-sm font-semibold text-slate-900" title={scene.name}>{scene.name || scene.id}</div>
+                    <div className="mt-2 grid gap-2 text-xs text-slate-600 sm:grid-cols-3">
+                      <div><span className="text-slate-400">Acquired</span><div className="mt-1 text-slate-800">{scene.acquisition ? new Date(scene.acquisition).toLocaleDateString() : 'Unavailable'}</div></div>
+                      <div><span className="text-slate-400">Satellite</span><div className="mt-1 text-slate-800">{scene.satellite}</div></div>
+                      <div><span className="text-slate-400">Cloud cover</span><div className="mt-1 text-slate-800">{scene.cloudCover === null ? 'Unavailable' : `${scene.cloudCover}%`}</div></div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid gap-4 p-5 lg:grid-cols-[1.1fr_1fr_1fr]">
