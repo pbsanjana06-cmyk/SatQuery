@@ -706,10 +706,10 @@ function App() {
           <div className="max-w-2xl">
             <div className="mb-3 text-xs uppercase tracking-[0.28em] text-amber-700">Satellite intelligence dashboard</div>
             <h1 className="text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">Explore the signals hidden in Earth imagery.</h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">Analyze uploaded satellite imagery, compare observations, inspect land cover, and explore potential nearby changes with clear evidence and provenance.</p>
+            <p className="mt-5 max-w-xl text-base leading-7 text-slate-600">Analyze uploaded satellite imagery, compare observations, inspect land cover, and explore potential nearby changes with clear evidence and provenance.</p>
             <button type="button" onClick={() => setIsDashboardOpen(true)} className="mt-8 flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 px-5 py-3 font-semibold text-white shadow-[0_16px_40px_rgba(212,160,23,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_20px_45px_rgba(212,160,23,0.45)]"><Sparkles size={18} /> Explore SatQuery</button>
           </div>
-          <div className="mt-12 grid gap-3 border-t border-slate-700/80 pt-6 text-xs text-slate-400 sm:grid-cols-3"><div><div className="mb-1 text-slate-200">Analyze</div>Ask questions about imagery and land cover.</div><div><div className="mb-1 text-slate-200">Compare</div>Inspect before and after observations.</div><div><div className="mb-1 text-slate-200">Discover</div>Review potential nearby changes.</div></div>
+          <div className="mt-12 grid gap-3 border-t border-slate-200 pt-6 text-xs text-slate-600 sm:grid-cols-3"><div><div className="mb-1 font-semibold text-slate-800">Analyze</div>Ask questions about imagery and land cover.</div><div><div className="mb-1 font-semibold text-slate-800">Compare</div>Inspect before and after observations.</div><div><div className="mb-1 font-semibold text-slate-800">Discover</div>Review potential nearby changes.</div></div>
         </div>
       </div>
     )
