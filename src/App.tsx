@@ -1446,9 +1446,9 @@ function App() {
           <div className="border-b border-amber-200 bg-gradient-to-r from-amber-50 via-white to-yellow-50 p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <div className="mb-2 text-xs uppercase tracking-[0.22em] text-emerald-300">Dataset intelligence dashboard</div>
-                <h1 className="text-2xl font-bold text-white">Copernicus Dataset Explorer</h1>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Explore Sentinel-1 SAR and Sentinel-2 multispectral imagery through land-cover questions, visual evidence, and benchmark-ready remote-sensing analysis.</p>
+                <div className="mb-2 text-xs uppercase tracking-[0.22em] text-emerald-300">Copernicus Dataset</div>
+                <h1 className="text-2xl font-bold text-white">Copernicus Dataset</h1>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Sentinel-1 SAR and Sentinel-2 multispectral Earth observation data.</p>
               </div>
               <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-medium text-emerald-200">Dataset-ready mode</span>
             </div>
@@ -1458,7 +1458,7 @@ function App() {
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Image pairs</div><div className="mt-2 text-2xl font-bold text-white">464K+</div><div className="mt-1 text-xs text-slate-400">Co-registered samples</div></div>
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Text annotations</div><div className="mt-2 text-2xl font-bold text-white">9.6M</div><div className="mt-1 text-xs text-slate-400">Captions, VQA, regions</div></div>
             <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Sensor pair</div><div className="mt-2 text-lg font-bold text-white">S1 + S2</div><div className="mt-1 text-xs text-slate-400">SAR + multispectral</div></div>
-            <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Catalogue</div><div className="mt-2 text-lg font-bold text-emerald-300">Copernicus</div><div className="mt-1 text-xs text-slate-400">Earth observation data space</div></div>
+            <div className="bg-slate-900/95 p-4"><div className="text-xs uppercase tracking-[0.15em] text-slate-500">Dataset</div><div className="mt-2 text-lg font-bold text-emerald-300">Copernicus</div><div className="mt-1 text-xs text-slate-400">Earth observation data</div></div>
           </div>
 
           <div className="grid gap-4 p-5 lg:grid-cols-[1.1fr_1fr_1fr]">
@@ -1505,12 +1505,12 @@ function App() {
 
             <div className="mb-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
               <div className="mb-2 flex items-center justify-between gap-2">
-                <div className="text-sm font-medium text-emerald-100">Copernicus evidence</div>
+                <div className="text-sm font-medium text-emerald-100">Copernicus Dataset</div>
                 <button type="button" onClick={() => setDatasetEvidenceEnabled((current) => !current)} className={`rounded-full px-2 py-1 text-xs ${datasetEvidenceEnabled ? 'bg-emerald-500/20 text-emerald-200' : 'bg-slate-800 text-slate-400'}`}>
                   {datasetEvidenceEnabled ? 'ON' : 'OFF'}
                 </button>
               </div>
-                <div className="text-xs leading-5 text-slate-400">Catalogue-ready grounding for Sentinel-1 SAR and Sentinel-2 multispectral analysis.</div>
+                <div className="text-xs leading-5 text-slate-400">Sentinel-1 SAR and Sentinel-2 multispectral data.</div>
             </div>
             </div>
 
@@ -1831,8 +1831,8 @@ function App() {
             <div className="mt-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-sm font-semibold text-emerald-100">Dataset Evidence</div>
-                  <div className="mt-1 text-xs text-slate-400">Copernicus Data Space interpretation layer</div>
+                  <div className="text-sm font-semibold text-emerald-100">Copernicus Dataset</div>
+                  <div className="mt-1 text-xs text-slate-400">Sentinel-1 and Sentinel-2 data</div>
                 </div>
                 <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs text-emerald-200">{datasetEvidence.evidenceScore}% match</span>
               </div>
