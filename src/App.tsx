@@ -33,8 +33,9 @@ import { validateImageFile } from './services/imageService'
 import { fetchNearbyFeatures } from './services/proximityService'
 import { isSupabaseConfigured, supabase } from './lib/supabase'
 import { AuthPage } from './components/AuthPage'
+import { EarthIntelligenceWorkspace } from './components/EarthIntelligenceWorkspace'
 import type { Session } from '@supabase/supabase-js'
-import type { AnalysisRecord, NearbyIssue, NearbyIssueAnalysis, UploadedImage } from './types'
+import type { AnalysisRecord, Location, NearbyIssue, NearbyIssueAnalysis, UploadedImage } from './types'
 import 'leaflet/dist/leaflet.css'
 
 const suggestedQuestions = [
@@ -996,19 +997,27 @@ function App() {
   const primaryImage = images[0]?.url
 
   const sidebarItems = [
-    { label: 'Overview', value: 'overview', keywords: ['dashboard', 'summary', 'home', 'welcome', 'stats'] },
-    { label: 'Dataset intelligence', value: 'dataset', keywords: ['dataset', 'copernicus', 'data space', 'sentinel', 'land cover'] },
+    { label: 'Dashboard', value: 'overview', keywords: ['dashboard', 'summary', 'home', 'welcome', 'stats'] },
+    { label: 'Analyze Image', value: 'analysis', keywords: ['analysis', 'upload', 'question', 'ai', 'image', 'query'] },
+    { label: 'Time Machine', value: 'time-machine', keywords: ['time machine', 'historical', 'timeline', 'dates', 'comparison'] },
+    { label: 'Satellite Forensics', value: 'forensics', keywords: ['forensics', 'why did it happen', 'cause', 'investigation'] },
+    { label: 'Talk to the Earth', value: 'talk-to-earth', keywords: ['voice', 'talk', 'earth', 'conversation', 'speech'] },
+    { label: 'Evidence Chain', value: 'evidence-chain', keywords: ['evidence', 'chain', 'traceability', 'supporting evidence'] },
+    { label: 'What-If Simulator', value: 'what-if-simulator', keywords: ['what if', 'simulation', 'scenario', 'impact'] },
+    { label: 'Change Detection', value: 'modes', keywords: ['change detection', 'disaster', 'agriculture', 'comparison', 'mode'] },
+    { label: 'Optical + SAR', value: 'comparison', keywords: ['sensor', 'comparison', 'sar', 'optical', 'multispectral', 'bands'] },
+    { label: 'Land Cover', value: 'dataset', keywords: ['dataset', 'copernicus', 'data space', 'sentinel', 'land cover'] },
+    { label: 'Disaster Mode', value: 'modes', keywords: ['disaster', 'flood', 'storm', 'risk', 'alert'] },
+    { label: 'Agriculture', value: 'modes', keywords: ['agriculture', 'crop', 'vegetation', 'stress'] },
+    { label: 'Urban Growth', value: 'modes', keywords: ['urban growth', 'building', 'construction', 'expansion'] },
+    { label: 'Satellite Map', value: 'map', keywords: ['map', 'location', 'geolocation', 'coordinates', 'viewport', 'geospatial'] },
+    { label: 'Analysis History', value: 'history', keywords: ['history', 'past', 'previous', 'saved', 'analyses', 'records'] },
+    { label: 'Reports', value: 'results', keywords: ['results', 'summary', 'report', 'insights', 'findings', 'evidence'] },
+    { label: 'Settings', value: 'tools', keywords: ['tools', 'generate', 'report', 'voice', 'speak', 'speech'] },
     { label: 'AI Nearby Issues', value: 'nearby', keywords: ['nearby', 'area', 'issues', 'satellite', 'location', 'anomaly'] },
     { label: 'Proximity Analysis', value: 'proximity', keywords: ['proximity', 'nearby features', 'hospitals', 'roads', 'rivers', 'hazards', 'location'] },
     { label: 'Climate & Early Warning', value: 'climate', keywords: ['climate', 'weather', 'forecast', 'warning', 'risk', 'rain'] },
-    { label: 'Analysis', value: 'analysis', keywords: ['analysis', 'upload', 'question', 'ai', 'image', 'query'] },
-    { label: 'Satellite map', value: 'map', keywords: ['map', 'location', 'geolocation', 'coordinates', 'viewport', 'geospatial'] },
-    { label: 'AI results', value: 'results', keywords: ['results', 'summary', 'report', 'insights', 'findings', 'evidence'] },
     { label: 'Data provenance', value: 'provenance', keywords: ['provenance', 'metadata', 'source', 'sensor', 'mission', 'dataset'] },
-    { label: 'History', value: 'history', keywords: ['history', 'past', 'previous', 'saved', 'analyses', 'records'] },
-    { label: 'Analysis modes', value: 'modes', keywords: ['modes', 'disaster', 'agriculture', 'comparison', 'mode', 'change detection'] },
-    { label: 'Sensor comparison', value: 'comparison', keywords: ['sensor', 'comparison', 'sar', 'optical', 'multispectral', 'bands'] },
-    { label: 'Tools', value: 'tools', keywords: ['tools', 'generate', 'report', 'voice', 'speak', 'speech'] },
   ]
 
   const siteSearchCatalog = [
@@ -1519,6 +1528,10 @@ function App() {
               <div className="mt-2 text-xs text-emerald-200">Vegetation and spectral signal</div>
             </div>
           </div>
+        </section>
+
+        <section id="workspace" className="mb-6 scroll-mt-24 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+          <EarthIntelligenceWorkspace location={safeLocation ? ({ id: 'current-location', name: selectedPlaceName || locationAddress || 'Selected location', lat: safeLocation.lat, lng: safeLocation.lng, radius: nearbyRadius } as Location) : null} />
         </section>
 
         <div hidden={activeSection !== 'analysis' && activeSection !== 'map' && activeSection !== 'nearby'} id="analysis" className="mx-auto max-w-5xl space-y-6 scroll-mt-24">

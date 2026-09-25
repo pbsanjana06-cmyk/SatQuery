@@ -85,6 +85,127 @@ export interface ReportRecord {
   file_name: string
 }
 
+export interface Location {
+  id: string
+  name: string
+  lat: number
+  lng: number
+  radius?: number
+}
+
+export interface SatelliteImage {
+  id: string
+  source: string
+  mission: string
+  sensor: string
+  date: string
+  modality: 'optical' | 'multispectral' | 'sar' | 'mixed'
+  band: string
+  cloudCover?: number
+  coordinates?: [number, number]
+  confidence?: number
+}
+
+export interface TimeSeries {
+  id: string
+  date: string
+  sensor: string
+  source: string
+  summary: string
+  changePercent: number
+  acquisition: string
+  band: string
+}
+
+export interface ChangeDetection {
+  id: string
+  location: string
+  dateRange: string
+  changeType: string
+  percentage: number
+  area: number
+  areaUnit: string
+  alertLevel: string
+  description: string
+  source: string
+  confidence: number
+}
+
+export interface ForensicFactor {
+  type: 'Detected' | 'Supported explanation' | 'Possible factor' | 'Insufficient evidence'
+  label: string
+  detail: string
+}
+
+export interface ForensicAnalysis {
+  id: string
+  question: string
+  location: string
+  whatChanged: string
+  whenChanged: string
+  detectedSummary: string
+  supportedExplanation: string
+  factors: ForensicFactor[]
+  evidence: string[]
+  confidence: number
+  reliability: 'HIGH' | 'MEDIUM' | 'LOW'
+  source: string
+  date: string
+}
+
+export interface EvidenceItem {
+  id: string
+  satelliteDate: string
+  source: string
+  imagePreview: string
+  regionLabel: string
+  coordinates: string
+  band: string
+  changeValue: number
+  evidenceType: string
+  confidence: number
+  regionId: string
+  dataSource: string
+}
+
+export interface Scenario {
+  id: string
+  title: string
+  mode: string
+  percentage: number
+  radius: number
+  affectedArea: number
+  confidence: number
+  summary: string
+  currentVsScenario: {
+    current: number
+    simulated: number
+  }
+  impactedRegions: string[]
+  source: string
+  location: string
+}
+
+export interface VoiceQuery {
+  id: string
+  question: string
+  answer: string
+  timestamp: string
+  context: string
+}
+
+export interface AnalysisReport {
+  id: string
+  title: string
+  location: string
+  created_at: string
+  summary: string
+  narrative: string
+  evidence: string[]
+  confidence: number
+  source: string
+}
+
 export type NearbyIssueCategory = 'environmental' | 'infrastructure' | 'urban' | 'agriculture' | 'disaster'
 export type NearbyIssueSeverity = 'LOW' | 'MEDIUM' | 'HIGH'
 
